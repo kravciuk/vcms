@@ -1,9 +1,21 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags widget_tweaks  %}
+{% load crispy_forms_tags widget_tweaks sekizai_tags staticfiles i18n  %}
 
 {% block title %}Создание новой записи{% endblock %}
 
 {% block content %}
+
+    {% addtoblock 'js' %}
+<script src="{% static 'jquery/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'jquery/jquery-ui.min.js' %}"></script>
+<script>
+    jQuery(document).ready(function ($) {
+        $(".tab-wrapper").tabs({
+            event: "click"
+        })
+    });
+</script>
+    {% endaddtoblock %}
 
 {{ form.media.css }}
 	<h2>Добавить новую запись</h2>

@@ -3,13 +3,15 @@ __author__ = 'Vadim Kravciuk, vadim@kravciuk.com'
 
 import os
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+from django.contrib import messages
 from django.views.decorators.http import require_POST
 from django.core.files.storage import default_storage
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import EmptyPage, PageNotAnInteger
-from .forms import AddOrEditContentPage, AddOrEditContentNews, PageContentForm
+from .forms import PageContentForm
 from .models import Content
 from unidecode import unidecode
 from flynsarmy_paginator.paginator import FlynsarmyPaginator
@@ -17,10 +19,6 @@ from jfu.http import upload_receive, UploadResponse, JFUResponse
 
 import logging as log
 # log = logging.getLogger(__name__)
-
-@login_required
-def index_personal(request, content_type="page"):
-    return index(request, owner=True, content_type="page")
 
 
 def index(request, owner=False, content_type="page"):
@@ -49,22 +47,33 @@ def index(request, owner=False, content_type="page"):
 
 @login_required
 def add_or_edit(request, content_type=None, parent=None):
-    pk = request.GET.get('id')
-    if pk:
-        instance = get_object_or_404(Content, pk=pk, user=request.user)
+    after = request.GET.get('after', request.POST.get('after'))
+    page = request.GET.get('page', request.POST.get('page'))
+    if page:
+        instance = get_object_or_404(Content, url=page, user=request.user)
     else:
         instance = None
 
-    if content_type is None or content_type == 'page':
-        if request.method == 'POST':
+    if request.POST.get('delete_button') and instance is not None:
+        try:
+            ins_type = instance.type
+            instance.delete()
+            messages.add_message(request, messages.INFO, _(u'Record deleted.'))
+            redirect(reverse('content_index_personal', args=[ins_type]))
+        except Exception as e:
+            messages.add_message(request, messages.ERROR, "%s %s" % (_(u'Failed to delete record.'), e))
+            log.debug("Error deleting record: %s" % e)
+
+    elif content_type is None or content_type == 'page':
+        if request.method == 'POST' and request.POST.get('save_button'):
             form = PageContentForm(request.POST, instance=instance)
             if form.is_valid():
-                if form.cleaned_data.get('id'):
+                if form.cleaned_data.get('page'):
                     form.save()
                 else:
-                    node_id = form.cleaned_data.get('parent_id', 0)
-                    if node_id > 0:
-                        node = get_object_or_404(Content, id=node_id, user=request.user)
+                    after = form.cleaned_data.get('after')
+                    if after:
+                        node = get_object_or_404(Content, url=after, user=request.user)
                         new_node = node.add_child(user=request.user)
                     else:
                         new_node = Content.add_root(user=request.user)
@@ -75,20 +84,10 @@ def add_or_edit(request, content_type=None, parent=None):
             else:
                 log.debug('Form error: %s' % form.errors)
         else:
-            form = PageContentForm(instance=instance, initial={'parent': 3})
-    elif content_type == 'news':
-        if request.method == 'POST':
-            form = AddOrEditContentNews(request.POST, instance=instance)
-            if form.is_valid():
-                instance = form.save(commit=False)
-                instance.user = request.user
-                instance.type = Content.TYPE_NEWS
-                instance.save()
-            else:
-                print 'FORM ERRROR'
-                log.debug('Form error')
-        else:
-            form = AddOrEditContentNews(instance=instance)
+            form = PageContentForm(instance=instance, initial={
+                'after': after,
+                'page': page,
+            })
     elif content_type == 'gallery':
         form = []
 

@@ -1,11 +1,11 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 import sys
 
 setup(
     # Basic package information.
     name = 'vcms',
     version = '1.1.0',
-    packages = ['vcms'],
+    packages = find_packages(),
     include_package_data = True,
     install_requires = [],
     url = 'https://github.com/kravciuk/vcms',

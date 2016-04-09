@@ -3,18 +3,34 @@ __author__ = 'Vadim Kravciuk, vadim@kravciuk.com'
 
 from django import template
 from django.core.urlresolvers import reverse
+from django.utils.translation import ugettext_lazy as _
 
 from vcms.content.models import *
 from vcms.share.models import *
 
 register = template.Library()
+import logging as log
+
+
+@register.simple_tag(takes_context=True)
+def content_edit_link(context, obj):
+    if context['request'].user.is_authenticated():
+        if context['request'].user.is_superuser or obj.user == context['request'].user:
+            return '<a href="%s?page=%s">%s</a>' % (
+                reverse('content_edit', args=[obj.type]),
+                obj.url,
+                _(u'Edit content')
+            )
+    return ''
+
 
 
 @register.inclusion_tag('vcms/admin.html', takes_context=True)
 def vcms_admin(context):
     current_page_url = None
     if 'content' in context:
-        current_page_url = context['content'].url
+        if hasattr(context['content'], 'url'):
+            current_page_url = context['content'].url
 
     if context['request'].user.is_superuser is True:
         return {
@@ -24,6 +40,16 @@ def vcms_admin(context):
     else:
         return {'menu': False}
 
+
+@register.assignment_tag
+def vcms_page(*args, **kwargs):
+    url = kwargs.get('url')
+
+    try:
+        return Content.objects.filter(enabled=True, url=url).get()
+    except Exception as e:
+        log.error('Cannot get page by url: '% url)
+        return ''
 
 @register.assignment_tag
 def vcms_pages(*args, **kwargs):

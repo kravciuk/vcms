@@ -36,12 +36,15 @@ class MyWidget(Select2Widget):
 
 
 class PageContentForm(forms.ModelForm):
+    after = forms.CharField(widget=forms.HiddenInput(), required=False)
+    page = forms.CharField(widget=forms.HiddenInput(), required=False)
+
     def __init__(self, *args, **kwargs):
         super(PageContentForm, self).__init__(*args, **kwargs)
 
     class Meta:
         model = Content
-        exclude = ['show_count', 'view_count', 'custom', 'user', 'rating', 'type']
+        exclude = ['show_count', 'view_count', 'custom', 'user', 'rating', 'type', 'id']
 
     def full_clean(self):
         super(PageContentForm, self).full_clean()
@@ -55,42 +58,3 @@ class PageContentForm(forms.ModelForm):
         if 'path' in self._errors:
             del self._errors['path']
 
-
-
-class AddOrEditContentNews(forms.ModelForm):
-    class Meta:
-        model = Content
-        exclude = ['show_count', 'view_count', 'custom', 'user', 'rating', 'type', 'parent']
-
-    def __init__(self, *args, **kwargs):
-        super(AddOrEditContentNews, self).__init__(*args, **kwargs)
-
-
-class BaseAddOrEditContentPage(MoveNodeForm):
-
-    class Meta:
-        model = Content
-        exclude = ['show_count', 'view_count', 'custom', 'user', 'rating', 'type', 'path']
-        widgets = {
-            'parent': Select2Widget()
-        }
-
-    def clean__position(self):
-        print 'HERE'
-        return 'sorted-child'
-
-    def full_clean(self):
-        super(BaseAddOrEditContentPage, self).full_clean()
-
-        if 'numchild' in self._errors:
-            del self._errors['numchild']
-
-        if 'depth' in self._errors:
-            del self._errors['depth']
-
-        return self.cleaned_data
-
-    def __init__(self, *args, **kwargs):
-        super(BaseAddOrEditContentPage, self).__init__(*args, **kwargs)
-
-AddOrEditContentPage = movenodeform_factory(Content, form=BaseAddOrEditContentPage, exclude=BaseAddOrEditContentPage.Meta.exclude)

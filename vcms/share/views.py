@@ -24,6 +24,7 @@ from pygments.lexers import get_lexer_by_name
 from pygments.formatters import HtmlFormatter
 
 import re
+import logging as log
 
 
 def link_redirect(request, short_id):
@@ -37,7 +38,7 @@ def link_redirect(request, short_id):
 def download_file(request, short_id):
     content = get_object_or_404(Share, slug=short_id, disabled=False)
     if content.file:
-        file_path = os.path.join(settings.MEDIA_ROOT, settings.VCMS_SHARE_UPLOADED_DIR, str(content.file))
+        file_path = os.path.join(settings.MEDIA_ROOT, str(content.file))
         return sendfile(
             request,
             file_path,
@@ -88,17 +89,21 @@ def add_or_edit(request, short_id=''):
                 result = _upload_file(request.FILES['file'], password=instance.password)
                 file_full_path = os.path.join(result.raw_path, result.name)
                 instance.file_name = request.FILES['file'].name[:128]
+                instance.file = os.path.join(result.path, result.name)
 
                 if instance.file_name.lower().endswith(('.jpg', '.jpeg', '.png')):
-                    source = open(file_full_path, 'r')
-                    th = Thumbnail(source=source)
-                    th_content = th.generate()
-                    fp = open(os.path.join(result.raw_path, 'th_'+result.name), 'wb')
-                    fp.write(th_content.read())
-                    fp.close()
-                    source.close()
-                    th_content.close()
-                    instance.thumbnail = os.path.join(result.path, 'th_'+result.name)
+                    source = open(file_full_path, 'rb')
+                    try:
+                        th = Thumbnail(source=source)
+                        th_content = th.generate()
+                        fp = open(os.path.join(result.raw_path, 'th_'+result.name), 'wb')
+                        fp.write(th_content.read())
+                        fp.close()
+                        source.close()
+                        th_content.close()
+                        instance.thumbnail = os.path.join(result.path, 'th_'+result.name)
+                    except Exception as e:
+                        log.error("Error creating thumbnail file: %s" % e)
                 elif instance.file_name.lower().endswith('.gif'):
                     instance.thumbnail = result.path
 
@@ -119,8 +124,8 @@ def _upload_file(file_object, password=None):
         access_path = os.path.join(access_path, SHARE_PROTECTED_DIR)
 
     today = datetime.date(datetime.now())
-    upload_path = os.path.join(upload_path, "%s/%s" % (today.strftime("%y"),today.strftime("%m")))
-    access_path = os.path.join(access_path, "%s/%s" % (today.strftime("%y"),today.strftime("%m")))
+    upload_path = os.path.join(upload_path, "%s/%s/%s" % (today.strftime("%y"), today.month, today.day))
+    access_path = os.path.join(access_path, "%s/%s/%s" % (today.strftime("%y"), today.month, today.day))
 
     if not os.path.exists(upload_path):
         os.makedirs(upload_path)

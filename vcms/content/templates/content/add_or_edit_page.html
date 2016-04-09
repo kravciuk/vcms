@@ -1,15 +1,45 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags widget_tweaks staticfiles  %}
+{% load crispy_forms_tags widget_tweaks staticfiles sekizai_tags i18n  %}
 
 {% block title %}Создание новой записи{% endblock %}
 
 {% block content %}
 
+
+
+    {% addtoblock 'js' %}
+<script src="{% static 'jquery/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'jquery/jquery-ui.min.js' %}"></script>
+<script>
+    jQuery(document).ready(function ($) {
+        $(".tab-wrapper").tabs({
+            event: "click"
+        })
+    });
+</script>
+    {% endaddtoblock %}
+
 {{ form.media.css }}
-	<h2>Добавить новую запись</h2>
+<style type="text/css">
+ul.as-selections li.as-original input {
+	height: auto !important;
+}
+    </style>
+    <h2>{% if form.page.value %}Добавить новую запись{% else %}Редактировать запись{% endif %}</h2>
+
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
 
         <form action="" method="post" accept-charset="utf-8" enctype="multipart/form-data">
         {% csrf_token %}
+            {{  form.after }}
+            {{ form.page }}
         <div class="row">
             <div class="col-md-12">
                 {{ form.non_field_errors }}
@@ -86,7 +116,6 @@
                                 </div>
                             </diw>
 
-
                         </div>
 
                     </div>
@@ -99,7 +128,8 @@
 </div>
 
             </div>
-            <input type="submit" class="button small blue">
+            <input type="submit" name="save_button" value="{% trans "Save" %}" class="button small blue">
+            {% if form.page.value %} <input type="submit" name="delete_button" value="{% trans "Delete" %}" class="button small red fl_right"> {% endif %}
         </div>
     </form>
     <script type="text/javascript" src="/static/admin/js/urlify.js"></script>
@@ -108,14 +138,9 @@
     <script type="text/javascript" src="/static/ckeditor/ckeditor-init.js"></script>
     <script type="text/javascript" src="/static/jquery-autosuggest/js/jquery.autoSuggest.minified.js"></script>
     <script type="text/javascript">
-    var slug_is_manual = false;
     document.getElementById("id_title").onkeyup = function() {
         var e = document.getElementById("id_slug");
-        if (!e._changed && slug_is_manual == false) { e.value = URLify(document.getElementById("id_title").value, 50); }
-    }
-
-    document.getElementById("id_slug").onkeyup = function() {
-        slug_is_manual = true;
+        if (!e._changed) { e.value = URLify(document.getElementById("id_title").value, 50); }
     }
 
     jQuery(document).ready(function($){
@@ -145,6 +170,8 @@
     });
 
     </script>
+
+
 {% endblock %}
 
 
