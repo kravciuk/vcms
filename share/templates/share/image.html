@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Image{% endblock %}
+
+{% block content %}
+<div id="content">
+
+    {% if response %}
+        <table width="100%" border="0">
+            {% if thumbnail %}
+            <tr>
+                <td colspan="2"><img src="/media/{{ thumbnail }}"></td>
+            </tr>
+            <tr>
+                <td style="width: 70px;">BB preview</td>
+                <td><textarea style="width: 100%; height: 60px;">[url=http://{{ host }}/media/{{ source }}][img]http://{{ host }}/media/{{ thumbnail }}[/img][/url]</textarea></td>
+            </tr>
+            <tr>
+                <td>Embeded Image</td>
+                <td><textarea style="width: 100%; height: 60px;">[img]http://{{ host }}/media/{{ source }}[/img]</textarea></td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="2"><img src="/media/{{ source }}"></td>
+            </tr>
+            <tr>
+                <td>Embeded Image</td>
+                <td><textarea style="width: 100%; height: 60px;">[img]http://{{ host }}/media/{{ source }}[/img]</textarea></td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td>IMG URL</td>
+                <td><textarea style="width: 100%; height: 30px;">http://{{ host }}/media/{{ source }}</textarea></td>
+            </tr>
+        </table>
+    {% endif %}
+
+{% if form %}
+    <form enctype="multipart/form-data" action="" method="post">{% csrf_token %}
+    <table>
+    {{ form }}
+    </table>
+    <input type="submit" value="Upload image">
+    </form>
+{% endif %}
+</div>
+{% endblock %}

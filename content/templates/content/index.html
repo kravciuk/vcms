@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load shorturl staticfiles i18n vcms_tags %}
+
+{% block title %}Pages{% endblock %}
+
+{% block content %}
+<style>
+.emin {
+    width: 100%;
+}
+</style>
+
+
+	<div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>{% trans "Title" %}</th>
+                        <th> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for record in listing %}
+                    <tr>
+                        <td><a href="{% content_url record  %}">{{ record.title }}</a> </td>
+                        <td>
+                            {% if record.user == request.user %}
+                                <a href="{% url 'content_edit' content_type %}?id={{ record.id }}">edit</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-10">
+
+        <nav>
+            <ul class="pagination">
+			{% if lising.has_previous %}
+				<li><a href="?page={{ lising.previous_page_number }}">previous</a></li>
+			{% endif %}
+
+			{% if lising.page_range_data.show_first %}<a href="?page=1">1</a><span class="ellipsis">...</span>{% endif %}
+			{% for i in lising.page_range_data.page_range %}
+				<li {% ifequal i lising.number %}class="active"{% endifequal %}><a href="?page={{ i }}">{{ i }}</a></li>
+			{% endfor %}
+			{% if lising.page_range_data.show_last %}
+				<span class="ellipsis">...</span><li><a href="?page={{ lising.paginator.num_pages }}">{{ lising.paginator.num_pages }}</a></li>
+			{% endif %}
+			{% if lising.has_next %}
+				<li><a href="?page={{ lising.next_page_number }}">next</a></li>
+			{% endif %}
+
+			{% if lising.has_next %}
+				<li><a href="?page={{ lising.next_page_number }}">next</a></li>
+			{% endif %}
+            </ul>
+
+        </nav>
+
+		</div>
+		<div class="col-md-2">
+				<a href="{% url 'content_edit' content_type %}" class="btn btn-success">{% trans "Add new record" %}</a>
+		</div>
+	</div>
+
+{% endblock %}
+

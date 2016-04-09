@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load shorturl staticfiles i18n vcms_tags %}
+
+{% block title %}Shared snippets{% endblock %}
+
+{% block content %}
+<style>
+.emin {
+    width: 100%;
+}
+</style>
+
+
+	<div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>{% trans "Name" %}</th>
+                        <th>{% trans "Type" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for share in shares %}
+                    <tr>
+                        <td><a href="{% web_path %}{{ share.view }}">{{ share.title }}</a>
+                            {% if share.user == request.user %}
+                                ( <a href="{% url 'share_edit' share.short_id %}">edit</a> )
+                            {% endif %}
+                        </td>
+                        <td>{{ share.type }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-10">
+
+        <nav>
+            <ul class="pagination">
+			{% if shares.has_previous %}
+				<li><a href="?page={{ shares.previous_page_number }}">previous</a></li>
+			{% endif %}
+
+			{% if shares.page_range_data.show_first %}<a href="?page=1">1</a><span class="ellipsis">...</span>{% endif %}
+			{% for i in shares.page_range_data.page_range %}
+				<li {% ifequal i shares.number %}class="active"{% endifequal %}><a href="?page={{ i }}">{{ i }}</a></li>
+			{% endfor %}
+			{% if shares.page_range_data.show_last %}
+				<span class="ellipsis">...</span><li><a href="?page={{ shares.paginator.num_pages }}">{{ shares.paginator.num_pages }}</a></li>
+			{% endif %}
+			{% if shares.has_next %}
+				<li><a href="?page={{ shares.next_page_number }}">next</a></li>
+			{% endif %}
+
+			{% if shares.has_next %}
+				<li><a href="?page={{ shares.next_page_number }}">next</a></li>
+			{% endif %}
+            </ul>
+
+        </nav>
+
+		</div>
+		<div class="col-md-2">
+				<a href="{% url 'share_add' %}" class="btn btn-success">{% trans "Add new snippet" %}</a>
+		</div>
+	</div>
+
+{% endblock %}
+

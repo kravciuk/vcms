@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load staticfiles sekizai_tags %}
+
+{% block title %}{{ snippet.title }}{% endblock %}
+
+{% block content %}
+
+    {% addtoblock "css" %}
+	<style>
+	.linenodiv {background-color: #003333; color: #FFCC33; padding-left: 3px; padding-right: 3px;}
+	.source {background-color: #fcf6f1; padding-left: 5px; padding-right: 15px;}
+	.sourcetable {
+		font-family: verdana, sans-serif; font-size: 13px;
+		padding: 3px 0 0 0;
+	}
+	</style>
+	<link href="/static/css/pygment.css" media="screen" rel="stylesheet" type="text/css" />
+    {% endaddtoblock %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <h2>{{ snippet.title }}</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            {% if snippet.description %}
+                <h4>Description</h4>
+                {{ snippet.description }}
+            {% endif %}
+        </div>
+    </div>
+
+  	{% if snippet.thumbnail %}
+		<div class="row">
+			<div class="col-md-12"><a href="/media/{{ snippet.file }}" id="view_image"> <img src="/media/{{ snippet.thumbnail }}"></a></div>
+        </div>
+        <div class="row">
+			<div class="col-md-12">
+				BB code (preview): <textarea style="width: 100%; height: 60px;">[url=http://{{ request.get_host }}/media/{{ snippet.file }}][img]http://{{ request.get_host }}/media/{{ snippet.thumbnail }}[/img][/url]</textarea><br/><br/>
+				BB code (direct to image): <textarea style="width: 100%; height: 60px;">[img]http://{{ request.get_host }}/media/{{ snippet.file }}[/img]</textarea>
+			</div>
+		</div>
+	{% elif snippet.file and snippet.type == 'image' %}
+		<div class="row">
+			<div class="col-md-12"><img src="/media/{{ snippet.file }}" style="max-width: 600px;"></div>
+        </div>
+        <div class="row">
+			<div class="col-md-12">
+				BB code (direct to image): <textarea style="width: 100%; height: 60px;">[img]http://{{ request.get_host }}/media/{{ snippet.file }}[/img]</textarea>
+			</div>
+		</div>
+    {% else %}
+		<div class="row">
+			<div class="col-md-12"><a href="{% url 'share_download_file' snippet.short_id %}">Download file</a></div>
+        </div>
+	{% endif %}
+
+	{% if snippet.content_html %}
+		<div class="row">
+            <div class="col-md-12">
+                <h4>Snippet code</h4>
+                {{ snippet.content_html|safe }}
+		    </div>
+		</div>
+		<div class="row">
+            <div class="col-md-12">
+				<textarea style="width: 100%; height: 300px;">{{ snippet.content|safe }}</textarea>
+		    </div>
+		</div>
+	{% endif %}
+
+    <div class="row">
+        <div class="col-md-12">
+            {% if snippet.file and snippet.type == 'source' %}<a href="/media/{{ snippet.file }}" class="btn btn-success">Скачать {{ snippet.file_name }}</a>{% endif %}
+			{% if snippet.content_html %}<a href="http://{{ request.get_host }}{% url 'share_snippet' snippet.short_id %}raw/" class="btn btn-success">Исходник</a>{% endif %}
+            {% if request.user.id == snippet.user_id %}<a href="{% url "share_edit" snippet.short_id %}" class="btn btn-success">Редактировать</a>{% endif %}
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags widget_tweaks staticfiles  %}
+
+{% block title %}Создание новой записи{% endblock %}
+
+{% block content %}
+
+{{ form.media.css }}
+	<h2>Добавить новую запись</h2>
+
+        <form action="" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-12">
+                {{ form.non_field_errors }}
+
+<div class="fieldWrapper">
+    {{ form.title.errors }}
+    <label for="{{ form.title.id_for_label }}">Title:</label>
+    {{ form.title }}
+</div>
+
+<div class="fieldWrapper">
+    {{ form.slug.errors }}
+    <label for="{{ form.slug.id_for_label }}">Slug:</label>
+    {{ form.slug }}
+</div>
+
+<div class="fieldWrapper">
+    {{ form.description.errors }}
+    <label for="{{ form.description.id_for_label }}">Description:</label>
+    {{ form.description }}
+</div>
+
+                <div class="tab-wrapper clear">
+                    <ul class="tab-nav clear">
+                        <li><a href="#tab-1">Content</a></li>
+                        <li><a href="#tab-2">Meta</a></li>
+                    </ul>
+                    <div class="tab-container">
+
+                        <div id="tab-1" class="tab-content clear">
+                            <div class="fieldWrapper">
+                                {{ form.content.errors }}
+                                <label for="{{ form.content.id_for_label }}">Content:</label>
+                                {{ form.content }}
+                            </div>
+                        </div>
+
+                        <div id="tab-2" class="tab-content clear">
+                            <div class="fieldWrapper">
+                                {{ form.meta_keywords.errors }}
+                                <label for="{{ form.meta_keywords.id_for_label }}">Keywords:</label>
+                                {{ form.meta_keywords }}
+                            </div>
+                            <div class="fieldWrapper">
+                                {{ form.meta_description.errors }}
+                                <label for="{{ form.meta_description.id_for_label }}">Description:</label>
+                                {{ form.meta_description }}
+                            </div>
+
+                            <div style="margin-bottom: 20px;">
+                                {{ form.category.errors }}
+                                <label for="{{ form.category.id_for_label }}">Category:</label>
+                                {{ form.category }}
+                            </div>
+
+                            <diw class="row">
+                                <div class="one_third">
+                                    <div>
+                                        {{ form.enabled.errors }}
+                                        {% render_field form.enabled class="plain_checkbox" %} Enabled
+                                    </div>
+                                </div>
+                                <div class="one_third">
+                                    <div>
+                                        {{ form.hidden.errors }}
+                                        {% render_field form.hidden class="plain_checkbox" %} Hidden
+                                    </div>
+                                </div>
+                                <div class="one_third">
+                                    <div>
+                                        {{ form.date_published.errors }}
+                                        Published: {% render_field form.date_published class="plain_datebox" %}
+                                    </div>
+                                </div>
+                            </diw>
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+<div class="fieldWrapper">
+    {{ form.tags.errors }}
+    <label for="{{ form.tags.id_for_label }}">Tags:</label>
+    {{ form.tags }}
+</div>
+
+            </div>
+            <input type="submit" class="button small blue">
+        </div>
+    </form>
+    <script type="text/javascript" src="/static/admin/js/urlify.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+    <script type="text/javascript" src="/static/ckeditor/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="/static/ckeditor/ckeditor-init.js"></script>
+    <script type="text/javascript" src="/static/jquery-autosuggest/js/jquery.autoSuggest.minified.js"></script>
+    <script type="text/javascript">
+    var slug_is_manual = false;
+    document.getElementById("id_title").onkeyup = function() {
+        var e = document.getElementById("id_slug");
+        if (!e._changed && slug_is_manual == false) { e.value = URLify(document.getElementById("id_title").value, 50); }
+    }
+
+    document.getElementById("id_slug").onkeyup = function() {
+        slug_is_manual = true;
+    }
+
+    jQuery(document).ready(function($){
+        $('.django-select2').not('django-select2-heavy').select2();
+        $('.django-select2.django-select2-heavy').each(function () {
+            var field_id = $(this).data('field_id');
+            $(this).select2({
+                ajax: {
+                    data: function (params) {
+                        return {
+                            term: params.term,
+                            page: params.page,
+                            field_id: field_id
+                        }
+                    },
+                    processResults: function (data, page) {
+                        return {
+                            results: data.results,
+                            pagination: {
+                                more: data.more
+                            }
+                      }
+                    }
+                }
+            });
+        });
+    });
+
+    </script>
+{% endblock %}
+
+
