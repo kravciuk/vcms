@@ -104,7 +104,6 @@ div.mixedcontent .column ul li{
 margin-bottom:3px;
 }
 
-
 /* ################# Vertical List Menu Specific CSS ############## */
 
 div.dropdownmenu{
@@ -124,6 +123,7 @@ div.dropdownmenu ul a{
 display:block;
 border-bottom:1px solid gray;
 padding:5px;
+    color: #54508b;
 }
 
 div.dropdownmenu ul a:hover, div.dropdownmenu ul a.selected{ /* style for selected menu item */

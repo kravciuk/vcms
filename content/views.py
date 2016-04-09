@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import EmptyPage, PageNotAnInteger
-from .forms import AddOrEditContentPage, AddOrEditContentNews, PageContentForm
+from .forms import AddOrEditContentNews, PageContentForm
 from .models import Content
 from unidecode import unidecode
 from flynsarmy_paginator.paginator import FlynsarmyPaginator
@@ -49,12 +49,14 @@ def index(request, owner=False, content_type="page"):
 
 @login_required
 def add_or_edit(request, content_type=None, parent=None):
-    pk = request.GET.get('id')
-    if pk:
-        instance = get_object_or_404(Content, pk=pk, user=request.user)
+    after = request.GET.get('after', request.POST.get('after'))
+    page = request.GET.get('page', request.POST.get('page'))
+    if page:
+        instance = get_object_or_404(Content, url=page, user=request.user)
     else:
         instance = None
 
+    print instance
     if content_type is None or content_type == 'page':
         if request.method == 'POST':
             form = PageContentForm(request.POST, instance=instance)
@@ -62,9 +64,9 @@ def add_or_edit(request, content_type=None, parent=None):
                 if form.cleaned_data.get('id'):
                     form.save()
                 else:
-                    node_id = form.cleaned_data.get('parent_id', 0)
-                    if node_id > 0:
-                        node = get_object_or_404(Content, id=node_id, user=request.user)
+                    after = form.cleaned_data.get('after')
+                    if after:
+                        node = get_object_or_404(Content, url=after, user=request.user)
                         new_node = node.add_child(user=request.user)
                     else:
                         new_node = Content.add_root(user=request.user)
@@ -75,7 +77,10 @@ def add_or_edit(request, content_type=None, parent=None):
             else:
                 log.debug('Form error: %s' % form.errors)
         else:
-            form = PageContentForm(instance=instance, initial={'parent': 3})
+            form = PageContentForm(instance=instance, initial={
+                'after': after,
+                'page': page,
+            })
     elif content_type == 'news':
         if request.method == 'POST':
             form = AddOrEditContentNews(request.POST, instance=instance)

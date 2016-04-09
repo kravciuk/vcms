@@ -14,16 +14,17 @@ window.jQuery || document.write('<script src="http://ajax.googleapis.com/ajax/li
     <script>ddiconmenu.docinit({menuid:'myiconmenu', easing:"easeInOutCirc", dur:500 })</script>
 
 <ul id="myiconmenu" class="iconmenu">
+    {% if current_page_url %}<li><a class="icon-edit" href="{% url 'content_edit' 'page' %}?page={{ current_page_url }}"></a></li>{% endif %}
     <li><a class="icon-plus" href="#" rel="csslibrary"></a></li>
     <li><a class="icon-gear" href="{% url 'admin:index' %}" target="_blank"></a></li>
 </ul>
 
-    <div id="csslibrary" class="iconsubmenu dropdownmenu">
-<ul class="ulmenu">
-<li><a class="icon-file-text-alt" href="{% url 'content_add' 'page' %}?after={{ current_page_url }}"> Page</a></li>
-<li><a class="icon-bell" href="{% url 'content_add' 'news' %}"> News</a></li>
-<li><a class="icon-code" href="{% url 'share_add' %}"> Snippet</a></li>
-</ul>
+<div id="csslibrary" class="iconsubmenu dropdownmenu">
+    <ul class="ulmenu">
+        <li><a href="{% url 'content_edit' 'page' %}?after={{ current_page_url }}"><i class="icon-file-text-alt"></i> Add page</a></li>
+        <li><a href="{% url 'content_edit' 'news' %}"><i class="icon-bell"></i> Add news</a></li>
+        <li><a href="{% url 'share_add' %}"><i class="icon-code"></i> Add snippet</a></li>
+    </ul>
 </div>
 
 {% endif %}

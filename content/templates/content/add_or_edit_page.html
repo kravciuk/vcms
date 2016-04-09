@@ -10,6 +10,8 @@
 
         <form action="" method="post" accept-charset="utf-8" enctype="multipart/form-data">
         {% csrf_token %}
+            {{  form.after }}
+            {{ form.page }}
         <div class="row">
             <div class="col-md-12">
                 {{ form.non_field_errors }}
