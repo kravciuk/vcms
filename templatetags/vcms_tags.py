@@ -14,7 +14,8 @@ register = template.Library()
 def vcms_admin(context):
     current_page_url = None
     if 'content' in context:
-        current_page_url = context['content'].url
+        if hasattr(context['content'], 'url'):
+            current_page_url = context['content'].url
 
     if context['request'].user.is_superuser is True:
         return {

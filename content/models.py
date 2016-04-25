@@ -145,6 +145,10 @@ class Content(MP_Node):
                 # Content, 'slug', self.slug, query={'parent': self.parent, 'type': self.type}
             )
 
+            self.url = self.slug
+            parent = self.get_parent(update=True)
+            if parent:
+                self.url = "%s/%s" % (parent.url, self.url)
             # if self.parent is not None:
             #     parent = Content.objects.get(pk=self.parent.pk)
             #     self.url = '%s/%s' % (parent.path, self.slug)

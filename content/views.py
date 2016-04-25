@@ -56,12 +56,11 @@ def add_or_edit(request, content_type=None, parent=None):
     else:
         instance = None
 
-    print instance
     if content_type is None or content_type == 'page':
         if request.method == 'POST':
             form = PageContentForm(request.POST, instance=instance)
             if form.is_valid():
-                if form.cleaned_data.get('id'):
+                if form.cleaned_data.get('page'):
                     form.save()
                 else:
                     after = form.cleaned_data.get('after')

@@ -11,9 +11,25 @@ from django.utils.text import slugify
 from taggit_autosuggest.managers import TaggableManager
 from markdown import markdown
 from hashids import Hashids
+from datetime import datetime
 
 SHARE_UPLOADED_DIR = settings.VCMS_SHARE_UPLOADED_DIR
 SHARE_PROTECTED_DIR = settings.VCMS_SHARE_PROTECTED_DIR
+
+
+# def upload_path(instance, filename):
+#     filename, file_extension = os.path.splitext(filename)
+#     if file_extension:
+#         filename = "%s%s" % (slugify(filename), file_extension)
+#
+#     today = datetime.now()
+#     upload_path = os.path.join(settings.MEDIA_ROOT, SHARE_UPLOADED_DIR)
+#     path = os.path.join(upload_path, "%s/%s/%s" % (today.year, today.month, today.day))
+#
+#     if not os.path.exists(path):
+#         os.makedirs(path)
+#
+#     return "%s/%s" % (path, filename)
 
 
 class Share(models.Model):
@@ -42,7 +58,7 @@ class Share(models.Model):
     type = models.CharField(max_length=10, verbose_name=_(u'Type'), choices=PYGMENTS_CHOISE, default='text', db_index=True)
     title = models.CharField(_(u'Title'),max_length=255, blank=True, null=True)
     slug = models.SlugField(_(u'Slug'),max_length=255, blank=True, null=True, db_index=True)
-    file = models.FileField(max_length=255, blank=True, null=True)
+    file = models.FileField(max_length=255, blank=True, null=True, upload_to=SHARE_UPLOADED_DIR)
     url = models.CharField(_(u'Url'),max_length=255, blank=True, null=True)
     tags = TaggableManager(_(u'Tags'), blank=True)
     description = models.TextField(_(u'Description'), blank=True, null=True)
@@ -82,6 +98,10 @@ class Share(models.Model):
         if self.slug is None:
             self.slug = self.short_id
             super(Share, self).save()
+
+    def process_file(self):
+        filename, file_extension = os.path.splitext(self.file)
+        file_name = "%s%s" % (slugify(filename), file_extension)
 
     @property
     def download_url(self):
