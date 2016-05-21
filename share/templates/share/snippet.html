@@ -4,7 +4,6 @@
 {% block title %}{{ snippet.title }}{% endblock %}
 
 {% block content %}
-
     {% addtoblock "css" %}
 	<style>
 	.linenodiv {background-color: #003333; color: #FFCC33; padding-left: 3px; padding-right: 3px;}
@@ -14,8 +13,9 @@
 		padding: 3px 0 0 0;
 	}
 	</style>
-	<link href="/static/css/pygment.css" media="screen" rel="stylesheet" type="text/css" />
+	<link href="{% static 'css/pygment.css' %}" media="screen" rel="stylesheet" type="text/css" />
     {% endaddtoblock %}
+
 
     <div class="row">
         <div class="col-md-12">

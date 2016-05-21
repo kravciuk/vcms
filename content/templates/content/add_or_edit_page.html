@@ -1,11 +1,23 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags widget_tweaks staticfiles  %}
+{% load crispy_forms_tags widget_tweaks staticfiles sekizai_tags i18n  %}
 
 {% block title %}Создание новой записи{% endblock %}
 
 {% block content %}
 
+
+
+    {% addtoblock 'js' %}
+<script src="{% static 'jquery/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'jquery/jquery-ui.min.js' %}"></script>
+    {% endaddtoblock %}
+
 {{ form.media.css }}
+<style type="text/css">
+ul.as-selections li.as-original input {
+	height: auto !important;
+}
+    </style>
 	<h2>Добавить новую запись</h2>
 
         <form action="" method="post" accept-charset="utf-8" enctype="multipart/form-data">
@@ -100,7 +112,8 @@
 </div>
 
             </div>
-            <input type="submit" class="button small blue">
+            <input type="submit" name="save_button" value="{% trans "Save" %}" class="button small blue">
+            {% if form.page.value %} <input type="submit" name="delete_button" value="{% trans "Delete" %}" class="button small red fl_right"> {% endif %}
         </div>
     </form>
     <script type="text/javascript" src="/static/admin/js/urlify.js"></script>
@@ -141,6 +154,8 @@
     });
 
     </script>
+
+
 {% endblock %}
 
 

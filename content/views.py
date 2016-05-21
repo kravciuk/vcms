@@ -56,7 +56,13 @@ def add_or_edit(request, content_type=None, parent=None):
     else:
         instance = None
 
-    if content_type is None or content_type == 'page':
+    if request.POST.get('button_delete') and instance is not None:
+        try:
+            instance.delete()
+        except Exception as e:
+            pass
+
+    elif content_type is None or content_type == 'page':
         if request.method == 'POST':
             form = PageContentForm(request.POST, instance=instance)
             if form.is_valid():
