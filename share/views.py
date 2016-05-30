@@ -24,6 +24,7 @@ from pygments.lexers import get_lexer_by_name
 from pygments.formatters import HtmlFormatter
 
 import re
+import logging as log
 
 
 def link_redirect(request, short_id):
@@ -37,7 +38,7 @@ def link_redirect(request, short_id):
 def download_file(request, short_id):
     content = get_object_or_404(Share, slug=short_id, disabled=False)
     if content.file:
-        file_path = os.path.join(settings.MEDIA_ROOT, settings.VCMS_SHARE_UPLOADED_DIR, str(content.file))
+        file_path = os.path.join(settings.MEDIA_ROOT, str(content.file))
         return sendfile(
             request,
             file_path,
@@ -91,7 +92,7 @@ def add_or_edit(request, short_id=''):
                 instance.file = os.path.join(result.path, result.name)
 
                 if instance.file_name.lower().endswith(('.jpg', '.jpeg', '.png')):
-                    source = open(file_full_path, 'r')
+                    source = open(file_full_path, 'rb')
                     try:
                         th = Thumbnail(source=source)
                         th_content = th.generate()
@@ -102,7 +103,7 @@ def add_or_edit(request, short_id=''):
                         th_content.close()
                         instance.thumbnail = os.path.join(result.path, 'th_'+result.name)
                     except Exception as e:
-                        print "Error creating thumbnail file"
+                        log.error("Error creating thumbnail file: %s" % e)
                 elif instance.file_name.lower().endswith('.gif'):
                     instance.thumbnail = result.path
 

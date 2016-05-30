@@ -62,7 +62,7 @@ class Category(models.Model):
         verbose_name_plural = _(u'Categories')
         ordering = ['name']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 

@@ -3,6 +3,8 @@ __author__ = 'Vadim Kravciuk, vadim@kravciuk.com'
 
 import os
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+from django.contrib import messages
 from django.views.decorators.http import require_POST
 from django.core.files.storage import default_storage
 from django.core.urlresolvers import reverse
@@ -56,14 +58,18 @@ def add_or_edit(request, content_type=None, parent=None):
     else:
         instance = None
 
-    if request.POST.get('button_delete') and instance is not None:
+    if request.POST.get('delete_button') and instance is not None:
         try:
+            ins_type = instance.type
             instance.delete()
+            messages.add_message(request, messages.INFO, _(u'Record deleted.'))
+            redirect(reverse('content_index_personal', args=[ins_type]))
         except Exception as e:
-            pass
+            messages.add_message(request, messages.ERROR, "%s %s" % (_(u'Failed to delete record.'), e))
+            log.debug("Error deleting record: %s" % e)
 
     elif content_type is None or content_type == 'page':
-        if request.method == 'POST':
+        if request.method == 'POST' and request.POST.get('save_button'):
             form = PageContentForm(request.POST, instance=instance)
             if form.is_valid():
                 if form.cleaned_data.get('page'):
@@ -95,7 +101,6 @@ def add_or_edit(request, content_type=None, parent=None):
                 instance.type = Content.TYPE_NEWS
                 instance.save()
             else:
-                print 'FORM ERRROR'
                 log.debug('Form error')
         else:
             form = AddOrEditContentNews(instance=instance)
