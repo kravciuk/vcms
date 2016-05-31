@@ -9,6 +9,7 @@ from vcms.content.models import *
 from vcms.share.models import *
 
 register = template.Library()
+import logging as log
 
 
 @register.simple_tag(takes_context=True)
@@ -39,6 +40,16 @@ def vcms_admin(context):
     else:
         return {'menu': False}
 
+
+@register.assignment_tag
+def vcms_page(*args, **kwargs):
+    url = kwargs.get('url')
+
+    try:
+        return Content.objects.filter(enabled=True, url=url).get()
+    except Exception as e:
+        log.error('Cannot get page by url: '% url)
+        return ''
 
 @register.assignment_tag
 def vcms_pages(*args, **kwargs):
