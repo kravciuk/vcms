@@ -58,11 +58,3 @@ class PageContentForm(forms.ModelForm):
         if 'path' in self._errors:
             del self._errors['path']
 
-
-class AddOrEditContentNews(forms.ModelForm):
-    class Meta:
-        model = Content
-        exclude = ['show_count', 'view_count', 'custom', 'user', 'rating', 'type', 'parent']
-
-    def __init__(self, *args, **kwargs):
-        super(AddOrEditContentNews, self).__init__(*args, **kwargs)

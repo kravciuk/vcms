@@ -11,7 +11,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import EmptyPage, PageNotAnInteger
-from .forms import AddOrEditContentNews, PageContentForm
+from .forms import PageContentForm
 from .models import Content
 from unidecode import unidecode
 from flynsarmy_paginator.paginator import FlynsarmyPaginator
@@ -92,18 +92,6 @@ def add_or_edit(request, content_type=None, parent=None):
                 'after': after,
                 'page': page,
             })
-    elif content_type == 'news':
-        if request.method == 'POST':
-            form = AddOrEditContentNews(request.POST, instance=instance)
-            if form.is_valid():
-                instance = form.save(commit=False)
-                instance.user = request.user
-                instance.type = Content.TYPE_NEWS
-                instance.save()
-            else:
-                log.debug('Form error')
-        else:
-            form = AddOrEditContentNews(instance=instance)
     elif content_type == 'gallery':
         form = []
 

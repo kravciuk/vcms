@@ -17,7 +17,6 @@ window.jQuery || document.write('<script src="http://ajax.googleapis.com/ajax/li
 <div id="csslibrary" class="iconsubmenu dropdownmenu">
     <ul class="ulmenu">
         <li><a href="{% url 'content_edit' 'page' %}?after={{ current_page_url|default:'' }}"><i class="icon-file-text-alt"></i> Add page</a></li>
-        <li><a href="{% url 'content_edit' 'news' %}"><i class="icon-bell"></i> Add news</a></li>
         <li><a href="{% url 'share_add' %}"><i class="icon-code"></i> Add snippet</a></li>
     </ul>
 </div>

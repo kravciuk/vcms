@@ -68,11 +68,9 @@ class Category(models.Model):
 
 class Content(MP_Node):
     TYPE_PAGE = 'page'
-    TYPE_NEWS = 'news'
     TYPE_GALLERY = 'gallery'
     type_choices = (
         (TYPE_PAGE, _(u'Page')),
-        (TYPE_NEWS, _(u'News')),
         (TYPE_GALLERY, _(u'Gallery')),
     )
 
@@ -109,6 +107,13 @@ class Content(MP_Node):
     def parent(self):
         return 1
 
+    @property
+    def short_content(self):
+        return self.content.split(cutter, 1)[0]
+
+    @property
+    def long_content(self):
+        return self.content.split(cutter, 1)[1]
 
     def get_upload_path(self, filename):
         return 'content/%s/%s' % (datetime.now().strftime("%Y/%m"), filename)
@@ -131,14 +136,6 @@ class Content(MP_Node):
         else:
             update_slug = True
 
-        if self.type == 'news':
-            pages = self.content.split(cutter)
-            self.custom = {}
-            i = 0
-            for part in pages:
-                self.custom['part_%s' % i] = part
-                i += 1
-
         if update_slug is True:
             self.slug = unique_slug(
                 Content, 'slug', self.slug, query={'type': self.type}
@@ -154,6 +151,8 @@ class Content(MP_Node):
             #     self.url = '%s/%s' % (parent.path, self.slug)
             # else:
             #     self.url = self.slug
+
+
 
         super(Content, self).save(*args, **kwargs)
 
