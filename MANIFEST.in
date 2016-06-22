@@ -1,0 +1,5 @@
+recursive-include vcms/static *
+recursive-include vcms/templates *
+
+include AUTHORS CONTRIBUTORS LICENSE CHANGELOG
+include setup.cfg
