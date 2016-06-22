@@ -20,10 +20,6 @@ from jfu.http import upload_receive, UploadResponse, JFUResponse
 import logging as log
 # log = logging.getLogger(__name__)
 
-@login_required
-def index_personal(request, content_type="page"):
-    return index(request, owner=True, content_type="page")
-
 
 def index(request, owner=False, content_type="page"):
     full_listing = Content.objects.filter(hidden=False, enabled=True, type=content_type)
