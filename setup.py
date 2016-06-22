@@ -5,7 +5,7 @@ setup(
     # Basic package information.
     name = 'vcms',
     version = '1.1.0',
-    packages = find_packages()
+    packages = find_packages(),
     include_package_data = True,
     install_requires = [],
     url = 'https://github.com/kravciuk/vcms',
