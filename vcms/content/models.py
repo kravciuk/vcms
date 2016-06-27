@@ -10,7 +10,6 @@ from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
 from ckeditor.fields import RichTextField
-from django.contrib.postgres.fields import HStoreField
 from ckeditor_uploader.fields import RichTextUploadingField
 from taggit.models import Tag, TaggedItem
 from unidecode import unidecode
@@ -83,7 +82,6 @@ class Content(MP_Node):
     enabled = models.BooleanField(_(u'Enabled'), default=True, db_index=True)
     hidden = models.BooleanField(_(u'Is hidden'), default=False, db_index=True)
     category = models.ForeignKey(Category, verbose_name=_(u'Category'), null=True, blank=True)
-    custom = HStoreField(blank=True, null=True)
     type = models.CharField(max_length=64, choices=type_choices, db_index=True, default=TYPE_PAGE)
     image = models.ImageField(upload_to=get_upload_path, blank=True)
     date_published = models.DateField(_(u'Date published'), default=timezone.now, db_index=True)

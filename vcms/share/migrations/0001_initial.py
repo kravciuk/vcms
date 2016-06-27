@@ -9,33 +9,33 @@ import taggit_autosuggest.managers
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('taggit', '0002_auto_20150616_2121'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('taggit', '0002_auto_20150616_2121'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='Share',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('type', models.CharField(default=b'text', max_length=10, verbose_name='Type', db_index=True, choices=[(b'text', b'Plain text'), (b'python', b'Python'), (b'php', b'PHP'), (b'bash', b'Bash'), (b'html', b'HTML'), (b'django', b'Django'), (b'smarty', b'Smarty'), (b'mysql', b'Mysql'), (b'postgresql', b'Postgresql'), (b'csharp', b'C#'), (b'lua', b'Lua'), (b'perl', b'Perl'), (b'ruby', b'Ruby'), (b'tcl', b'Tcl'), (b'scheme', b'Scheme'), (b'xml', b'XML')])),
-                ('title', models.CharField(max_length=255, null=True, verbose_name='Title', blank=True)),
-                ('slug', models.SlugField(max_length=255, null=True, verbose_name='Slug', blank=True)),
-                ('file', models.FileField(max_length=255, null=True, upload_to=b'', blank=True)),
-                ('url', models.CharField(max_length=255, null=True, verbose_name='Url', blank=True)),
-                ('description', models.TextField(null=True, verbose_name='Description', blank=True)),
-                ('content', models.TextField(null=True, verbose_name='Content', blank=True)),
-                ('password', models.CharField(db_index=True, max_length=64, blank=True)),
-                ('disabled', models.BooleanField(default=False, db_index=True)),
-                ('hidden', models.BooleanField(default=False, db_index=True)),
+                ('id', models.AutoField(auto_created=True, serialize=False, primary_key=True, verbose_name='ID')),
+                ('type', models.CharField(db_index=True, default='text', choices=[('text', 'Plain text'), ('python', 'Python'), ('php', 'PHP'), ('bash', 'Bash'), ('html', 'HTML'), ('django', 'Django'), ('smarty', 'Smarty'), ('mysql', 'Mysql'), ('postgresql', 'Postgresql'), ('csharp', 'C#'), ('lua', 'Lua'), ('perl', 'Perl'), ('ruby', 'Ruby'), ('tcl', 'Tcl'), ('scheme', 'Scheme'), ('xml', 'XML')], verbose_name='Type', max_length=10)),
+                ('title', models.CharField(null=True, blank=True, verbose_name='Title', max_length=255)),
+                ('slug', models.SlugField(null=True, blank=True, verbose_name='Slug', max_length=255)),
+                ('file', models.FileField(null=True, blank=True, upload_to='share', max_length=255)),
+                ('url', models.CharField(null=True, blank=True, verbose_name='Url', max_length=255)),
+                ('description', models.TextField(null=True, blank=True, verbose_name='Description')),
+                ('content', models.TextField(null=True, blank=True, verbose_name='Content')),
+                ('password', models.CharField(blank=True, db_index=True, max_length=64)),
+                ('disabled', models.BooleanField(db_index=True, default=False)),
+                ('hidden', models.BooleanField(db_index=True, default=False)),
                 ('views', models.IntegerField(default=0, editable=False)),
-                ('file_name', models.CharField(max_length=128, null=True, blank=True)),
-                ('thumbnail', models.CharField(max_length=255, null=True, editable=False)),
+                ('file_name', models.CharField(null=True, blank=True, max_length=128)),
+                ('thumbnail', models.CharField(null=True, editable=False, max_length=255)),
                 ('time_created', models.DateTimeField(auto_now_add=True)),
                 ('time_updated', models.DateTimeField(auto_now_add=True)),
-                ('content_html', models.TextField(null=True, editable=False, blank=True)),
-                ('tags', taggit_autosuggest.managers.TaggableManager(to='taggit.Tag', through='taggit.TaggedItem', blank=True, help_text='A comma-separated list of tags.', verbose_name='Tags')),
-                ('user', models.ForeignKey(default=1, to=settings.AUTH_USER_MODEL)),
+                ('content_html', models.TextField(null=True, blank=True, editable=False)),
+                ('tags', taggit_autosuggest.managers.TaggableManager(blank=True, verbose_name='Tags', through='taggit.TaggedItem', to='taggit.Tag', help_text='A comma-separated list of tags.')),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, default=1)),
             ],
         ),
     ]
