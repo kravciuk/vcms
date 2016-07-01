@@ -93,6 +93,10 @@ class Share(models.Model):
         elif not self.title and self.url:
             self.title = _(u'Url to: %s %s' % (self.url[:32], '...' if len(self.url) > 32 else ''))
 
+        self.type = self.file_type()
+        print("TITLE: %s" % self.type)
+        self.get_title()
+
         super(Share, self).save()
 
         if self.slug is None:
@@ -117,10 +121,14 @@ class Share(models.Model):
 
     @property
     def view(self):
-        if self.url:
+        if self.url and self.video_link is False:
             return self.redirect_url
         else:
             return self.base_url
+
+    def get_title(self):
+        if self.title is None or self.title.strip() == '':
+            self.title = "%s - %s" % (_(u'Snippet'), self.type)
 
     def unique_slug(self, slug, counter=0):
         if counter > 0:
@@ -150,13 +158,22 @@ class Share(models.Model):
     def get_absolute_url(self):
         return '/%s/%s' % ('share', self.short_id)
 
-    @property
     def file_type(self):
-        filename, file_extension = os.path.splitext(self.file_name)
-        if file_extension.lower() in ['jpg', 'jpeg', 'gif', 'png']:
-            return 'image'
-        else:
-            return 'file'
+        if self.file_name is not None:
+            filename, file_extension = os.path.splitext(self.file_name)
+            print ("Extension: %s" % file_extension.lower())
+            if file_extension.lower() in ['.jpg', '.jpeg', '.gif', '.png']:
+                return 'image'
+            else:
+                return 'file'
+        return self.type
+
+    @property
+    def video_link(self):
+        if self.url is not None:
+            if self.url.find('youtube'):
+                return True
+        return False
 
     def __unicode__(self):
         return self.title

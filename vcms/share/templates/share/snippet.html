@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load staticfiles sekizai_tags %}
+{% load staticfiles sekizai_tags embed_video_tags %}
 
 {% block title %}{{ snippet.title }}{% endblock %}
 
@@ -51,11 +51,17 @@
 				BB code (direct to image): <textarea style="width: 100%; height: 60px;">[img]http://{{ request.get_host }}/media/{{ snippet.file }}[/img]</textarea>
 			</div>
 		</div>
-    {% else %}
+    {% elif snippet.file %}
 		<div class="row">
 			<div class="col-md-12"><a href="{% url 'share_download_file' snippet.short_id %}">Download file</a></div>
         </div>
 	{% endif %}
+
+    {% if snippet.video_link %}
+		<div class="row">
+			<div class="col-md-12">{% video snippet.url 'small' %}</div>
+        </div>
+    {% endif %}
 
 	{% if snippet.content_html %}
 		<div class="row">

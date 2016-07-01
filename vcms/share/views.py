@@ -104,8 +104,6 @@ def add_or_edit(request, short_id=''):
                         instance.thumbnail = os.path.join(result.path, 'th_'+result.name)
                     except Exception as e:
                         log.error("Error creating thumbnail file: %s" % e)
-                elif instance.file_name.lower().endswith('.gif'):
-                    instance.thumbnail = result.path
 
             instance.save()
             return redirect('share_snippet', short_id=instance.short_id)
