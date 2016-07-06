@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Vadim Kravciuk, vadim@kravciuk.com'
 
+import re
 from django import template
-from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from vcms.content.models import *
@@ -10,6 +10,21 @@ from vcms.share.models import *
 
 register = template.Library()
 import logging as log
+
+
+@register.simple_tag(takes_context=True)
+def old_ie_browser(context):
+    is_old = False
+    if 'HTTP_USER_AGENT' in context['request'].META:
+        user_agent = context['request'].META['HTTP_USER_AGENT']
+        pattern = "msie [1-8]\."
+        prog = re.compile(pattern, re.IGNORECASE)
+        match = prog.search(user_agent)
+
+        if match:
+            is_old = True
+
+    return is_old
 
 
 @register.simple_tag(takes_context=True)
@@ -22,7 +37,6 @@ def content_edit_link(context, obj):
                 _(u'Edit content')
             )
     return ''
-
 
 
 @register.inclusion_tag('vcms/admin.html', takes_context=True)
@@ -50,6 +64,7 @@ def vcms_page(*args, **kwargs):
     except Exception as e:
         log.error('Cannot get page by url: '% url)
         return ''
+
 
 @register.assignment_tag
 def vcms_pages(*args, **kwargs):
