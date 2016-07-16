@@ -4,6 +4,7 @@ __author__ = 'Vadim Kravciuk, vadim@kravciuk.com'
 import re
 from django import template
 from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
 
 from vcms.content.models import *
 from vcms.share.models import *
@@ -29,14 +30,15 @@ def old_ie_browser(context):
 
 @register.simple_tag(takes_context=True)
 def content_edit_link(context, obj):
+    res = ''
     if context['request'].user.is_authenticated():
         if context['request'].user.is_superuser or obj.user == context['request'].user:
-            return '<a href="%s?page=%s">%s</a>' % (
+            res = '<a href="%s?page=%s">%s</a>' % (
                 reverse('content_edit', args=[obj.type]),
                 obj.url,
                 _(u'Edit content')
             )
-    return ''
+    return mark_safe(res)
 
 
 @register.inclusion_tag('vcms/admin.html', takes_context=True)
