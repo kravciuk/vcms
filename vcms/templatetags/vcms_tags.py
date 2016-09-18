@@ -35,7 +35,7 @@ def content_edit_link(context, obj):
         if context['request'].user.is_superuser or obj.user == context['request'].user:
             res = '<a href="%s?page=%s">%s</a>' % (
                 reverse('content_edit', args=[obj.type]),
-                obj.url,
+                obj.hash,
                 _(u'Edit content')
             )
     return mark_safe(res)
@@ -43,15 +43,15 @@ def content_edit_link(context, obj):
 
 @register.inclusion_tag('vcms/admin.html', takes_context=True)
 def vcms_admin(context):
-    current_page_url = None
+    current_page_hash = None
     if 'content' in context:
         if hasattr(context['content'], 'url'):
-            current_page_url = context['content'].url
+            current_page_hash = context['content'].hash
 
     if context['request'].user.is_superuser is True:
         return {
             'menu': True,
-            'current_page_url': current_page_url,
+            'current_page_hash': current_page_hash,
         }
     else:
         return {'menu': False}
@@ -74,14 +74,15 @@ def vcms_pages(*args, **kwargs):
     parent = kwargs.get('parent')
     limit = kwargs.get('limit', 10)
     limit_from = kwargs.get('limit_from', 0)
+    rs = Content.objects.filter(enabled=True)
 
-    rs = Content.objects.filter(enabled=True, hidden=False)
-    # if parent:
-    #     rs = rs.filter(parent__path=parent)
-    # else:
-    #     rs = rs.filter(parent=None)
+    if parent:
+        rs = rs.filter(url=parent).get().get_children()
+
     if category:
         rs = rs.filter(category__slug=category)
+
+    rs = rs.filter(hidden=False).order_by('-date_published', '-id')
     return rs[limit_from:limit]
 
 
@@ -114,10 +115,10 @@ def web_path(context, scheme='auto'):
     return "%s://%s" % (scheme, context['request'].get_host())
 
 
-@register.assignment_tag
-def content_get_snippet(request, name):
+@register.simple_tag()
+def content_get_snippet(name):
     rs = Snippet.objects.select_related().filter(slug=name)
     if rs:
-        return rs[0]
+        return mark_safe(rs[0].content)
     else:
         return None

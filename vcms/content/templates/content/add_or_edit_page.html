@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags widget_tweaks staticfiles sekizai_tags i18n  %}
+{% load crispy_forms_tags widget_tweaks staticfiles sekizai_tags i18n vcms_tags  %}
 
 {% block title %}Создание новой записи{% endblock %}
 
@@ -9,14 +9,14 @@
 
     {% addtoblock 'js' %}
 <script src="{% static 'jquery/jquery-2.1.4.min.js' %}"></script>
-<script src="{% static 'jquery/jquery-ui.min.js' %}"></script>
-<script>
-    jQuery(document).ready(function ($) {
-        $(".tab-wrapper").tabs({
-            event: "click"
-        })
-    });
-</script>
+{#<script src="{% static 'jquery/jquery-ui.min.js' %}"></script>#}
+{#<script>#}
+{#    jQuery(document).ready(function ($) {#}
+{#        $(".tab-wrapper").tabs({#}
+{#            event: "click"#}
+{#        })#}
+{#    });#}
+{#</script>#}
     {% endaddtoblock %}
 
 {{ form.media.css }}
@@ -25,7 +25,7 @@ ul.as-selections li.as-original input {
 	height: auto !important;
 }
     </style>
-    <h2>{% if form.page.value %}Добавить новую запись{% else %}Редактировать запись{% endif %}</h2>
+    <h2>{% if not form.page.value %}Добавить новую запись{% else %}Редактировать запись "<a href="{% url 'content_page' instance.url %}">{{ instance.title }}</a>"{% endif %}</h2>
 
 
     {% if messages %}
@@ -44,92 +44,91 @@ ul.as-selections li.as-original input {
             <div class="col-md-12">
                 {{ form.non_field_errors }}
 
-<div class="fieldWrapper">
-    {{ form.title.errors }}
-    <label for="{{ form.title.id_for_label }}">Title:</label>
-    {{ form.title }}
-</div>
+            <div class="row">
+                <div class="fieldWrapper">
+                    {{ form.title.errors }}
+                    <label for="{{ form.title.id_for_label }}">Title:</label>
+                    {{ form.title }}
+                </div>
+            </div>
 
-<div class="fieldWrapper">
-    {{ form.slug.errors }}
-    <label for="{{ form.slug.id_for_label }}">Slug:</label>
-    {{ form.slug }}
-</div>
+            <div class="row">
+                <div class="fieldWrapper">
+                    {{ form.slug.errors }}
+                    <label for="{{ form.slug.id_for_label }}">Slug:</label>
+                    {{ form.slug }}
+                </div>
+            </div>
 
-<div class="fieldWrapper">
-    {{ form.description.errors }}
-    <label for="{{ form.description.id_for_label }}">Description:</label>
-    {{ form.description }}
-</div>
+            <div class="row">
+                <div class="fieldWrapper">
+                    {{ form.content.errors }}
+                    <label for="{{ form.content.id_for_label }}">Content:</label>
+                    {{ form.content }}
+                </div>
+            </div>
 
-                <div class="tab-wrapper clear">
-                    <ul class="tab-nav clear">
-                        <li><a href="#tab-1">Content</a></li>
-                        <li><a href="#tab-2">Meta</a></li>
-                    </ul>
-                    <div class="tab-container">
-
-                        <div id="tab-1" class="tab-content clear">
-                            <div class="fieldWrapper">
-                                {{ form.content.errors }}
-                                <label for="{{ form.content.id_for_label }}">Content:</label>
-                                {{ form.content }}
-                            </div>
-                        </div>
-
-                        <div id="tab-2" class="tab-content clear">
-                            <div class="fieldWrapper">
-                                {{ form.meta_keywords.errors }}
-                                <label for="{{ form.meta_keywords.id_for_label }}">Keywords:</label>
-                                {{ form.meta_keywords }}
-                            </div>
-                            <div class="fieldWrapper">
-                                {{ form.meta_description.errors }}
-                                <label for="{{ form.meta_description.id_for_label }}">Description:</label>
-                                {{ form.meta_description }}
-                            </div>
-
-                            <div style="margin-bottom: 20px;">
-                                {{ form.category.errors }}
-                                <label for="{{ form.category.id_for_label }}">Category:</label>
-                                {{ form.category }}
-                            </div>
-
-                            <diw class="row">
-                                <div class="one_third">
-                                    <div>
-                                        {{ form.enabled.errors }}
-                                        {% render_field form.enabled class="plain_checkbox" %} Enabled
-                                    </div>
-                                </div>
-                                <div class="one_third">
-                                    <div>
-                                        {{ form.hidden.errors }}
-                                        {% render_field form.hidden class="plain_checkbox" %} Hidden
-                                    </div>
-                                </div>
-                                <div class="one_third">
-                                    <div>
-                                        {{ form.date_published.errors }}
-                                        Published: {% render_field form.date_published class="plain_datebox" %}
-                                    </div>
-                                </div>
-                            </diw>
-
-                        </div>
-
+            <div class="row">
+                <div class="col_1_3">
+                    <div class="fieldWrapper">
+                        {{ form.tags.errors }}
+                        <label for="{{ form.tags.id_for_label }}">Tags:</label>
+                        {{ form.tags }}
                     </div>
                 </div>
+                <div class="col_1_3">
+                    <div class="fieldWrapper">
+                        {{ form.template.errors }}
+                        <label for="{{ form.template.id_for_label }}">Template:</label>
+                        {{ form.template }}
+                    </div>
+                </div>
+                <div class="col_1_3">
+                    {{ form.category.errors }}
+                    <label for="{{ form.category.id_for_label }}">Category:</label>
+                    {{ form.category }}
+                </div>
+            </div>
 
-<div class="fieldWrapper">
-    {{ form.tags.errors }}
-    <label for="{{ form.tags.id_for_label }}">Tags:</label>
-    {{ form.tags }}
-</div>
+            <div class="row">
+                <div class="fieldWrapper">
+                    {{ form.meta_keywords.errors }}
+                    <label for="{{ form.meta_keywords.id_for_label }}">Keywords:</label>
+                    {{ form.meta_keywords }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="fieldWrapper">
+                    {{ form.meta_description.errors }}
+                    <label for="{{ form.meta_description.id_for_label }}">Description:</label>
+                    {{ form.meta_description }}
+                </div>
+            </div>
+
+            <diw class="row">
+                <div class="col_1_2">
+                    <div class="fieldWrapper">
+                        {% render_field form.enabled %} is enabled
+                        {% render_field form.hidden %} hide from menu
+                    </div>
+                </div>
+                <div class="col_1_2">
+                    <div class="fieldWrapper">
+                        {{ form.date_published.errors }}
+                        Published: {% render_field form.date_published class="plain_datebox" %}
+                    </div>
+                </div>
+            </diw>
+
+            <div class="row form-input clear">
+                <div>
+                    <input type="submit" name="save_button" value="{% trans "Save" %}" class="button small blue">
+                    {% if form.page.value %} <input type="submit" name="delete_button" value="{% trans "Delete" %}" class="button small red fl_right"> {% endif %}
+                </div>
+            </div>
 
             </div>
-            <input type="submit" name="save_button" value="{% trans "Save" %}" class="button small blue">
-            {% if form.page.value %} <input type="submit" name="delete_button" value="{% trans "Delete" %}" class="button small red fl_right"> {% endif %}
         </div>
     </form>
     <script type="text/javascript" src="/static/admin/js/urlify.js"></script>

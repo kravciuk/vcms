@@ -15,7 +15,7 @@ from sendfile import sendfile
 
 from .forms import AddSnippetForm
 from .models import Share, SHARE_PROTECTED_DIR, SHARE_UPLOADED_DIR
-from .utils import hash_to_id, unique_file_name
+from vcms.utils import hash_to_id, unique_file_name
 
 from flynsarmy_paginator.paginator import FlynsarmyPaginator
 

@@ -1,9 +1,11 @@
 {% extends "base.html" %}
-{% load shorturl staticfiles i18n vcms_tags %}
+{% load shorturl staticfiles i18n vcms_tags sekizai_tags %}
 
 {% block title %}{{ content.title }}{% endblock %}
 
 {% block content %}
+{% addtoblock 'js' %}<script src="/static/ckeditor/ckeditor/plugins/prism/lib/prism/prism_patched.min.js"></script>{% endaddtoblock %}
+{% addtoblock 'css' %}<link href="/static/ckeditor/ckeditor/plugins/prism/lib/prism/prism_patched.min.css" rel="stylesheet"></script>{% endaddtoblock %}
 
     <h1>{{ content.title }}</h1>
 

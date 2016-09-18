@@ -13,9 +13,9 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import EmptyPage, PageNotAnInteger
 from .forms import PageContentForm
 from .models import Content
-from unidecode import unidecode
+from vcms.utils import id_to_hash, hash_to_id
 from flynsarmy_paginator.paginator import FlynsarmyPaginator
-from jfu.http import upload_receive, UploadResponse, JFUResponse
+# from jfu.http import upload_receive, UploadResponse, JFUResponse
 
 import logging as log
 # log = logging.getLogger(__name__)
@@ -50,7 +50,7 @@ def add_or_edit(request, content_type=None, parent=None):
     after = request.GET.get('after', request.POST.get('after'))
     page = request.GET.get('page', request.POST.get('page'))
     if page:
-        instance = get_object_or_404(Content, url=page, user=request.user)
+        instance = get_object_or_404(Content, id=hash_to_id(page, length=Content.HASH_LENGTH), user=request.user)
     else:
         instance = None
 
@@ -69,11 +69,11 @@ def add_or_edit(request, content_type=None, parent=None):
             form = PageContentForm(request.POST, instance=instance)
             if form.is_valid():
                 if form.cleaned_data.get('page'):
-                    form.save()
+                    instance = form.save()
                 else:
                     after = form.cleaned_data.get('after')
                     if after:
-                        node = get_object_or_404(Content, url=after, user=request.user)
+                        node = get_object_or_404(Content, id=hash_to_id(after, length=Content.HASH_LENGTH), user=request.user)
                         new_node = node.add_child(user=request.user)
                     else:
                         new_node = Content.add_root(user=request.user)
@@ -81,6 +81,8 @@ def add_or_edit(request, content_type=None, parent=None):
                     instance = form.save(commit=False)
                     instance.user = request.user
                     instance.save()
+                messages.add_message(request, messages.INFO, _(u'Record saved.'))
+                return redirect("%s?page=%s" % (reverse('content_edit', args=['page']), instance.hash))
             else:
                 log.debug('Form error: %s' % form.errors)
         else:
@@ -93,12 +95,12 @@ def add_or_edit(request, content_type=None, parent=None):
 
     return render(request, 'content/add_or_edit_%s.html' % content_type, {
         'form': form,
-
+        'instance': instance,
     })
 
 
 def content_view(request, path, *args, **kwargs):
     instance = get_object_or_404(Content, enabled=True, url=path)
-    return render(request, 'content/content_view.html', {
+    return render(request, "content/%s.html" % instance.template, {
         'content': instance,
     })

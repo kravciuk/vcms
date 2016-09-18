@@ -1,6 +1,40 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Vadim Kravciuk, vadim@kravciuk.com'
 
+import os
+from hashids import Hashids
+from django.conf import settings
+
+
+def id_to_hash(short_id, salt=None, length=4):
+    if salt is None:
+        salt = settings.SECRET_KEY
+    return Hashids(salt=salt, min_length=length).encrypt(short_id)
+
+
+def hash_to_id(short_id, salt=None, length=4, default=0):
+    if salt is None:
+        salt = settings.SECRET_KEY
+    hashids = Hashids(salt=salt, min_length=length)
+    decrypt = hashids.decrypt(short_id)
+    if len(decrypt) == 0:
+        real_id = default
+    else:
+        real_id = decrypt[0]
+
+    return real_id
+
+
+def unique_file_name(dir_path, file_name):
+    if not os.path.exists("%s/%s" % (dir_path, file_name)):
+        return file_name
+    else:
+        _file, _ext = os.path.splitext(file_name)
+        i = 1
+        while os.path.exists("%s/%s_%s%s" % (dir_path, _file, str(i), _ext)):
+            i += 1
+        return "%s_%s%s" % (_file, str(i), _ext)
+
 
 def unique_slug(instance, slug_field, slug, counter=0, query=None):
     if counter > 0:

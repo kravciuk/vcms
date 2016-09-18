@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load shorturl staticfiles i18n vcms_tags sekizai_tags %}
+
+{% block title %}{{ content.title }}{% endblock %}
+
+{% block content %}
+
+    {% vcms_pages parent=content.url as records %}
+
+        {% for record in records %}
+            <div style="margin-bottom: 30px;">
+                <h3>{{ record.title }}</h3>
+                {{ record.short_content|safe }}
+                <a href="{% url 'content_page' record.url %}">Полный текст</a>
+            </div>
+        {% endfor %}
+{% endblock %}
+

@@ -94,7 +94,6 @@ class Share(models.Model):
             self.title = _(u'Url to: %s %s' % (self.url[:32], '...' if len(self.url) > 32 else ''))
 
         self.type = self.file_type()
-        print("TITLE: %s" % self.type)
         self.get_title()
 
         super(Share, self).save()
@@ -161,7 +160,6 @@ class Share(models.Model):
     def file_type(self):
         if self.file_name is not None:
             filename, file_extension = os.path.splitext(self.file_name)
-            print ("Extension: %s" % file_extension.lower())
             if file_extension.lower() in ['.jpg', '.jpeg', '.gif', '.png']:
                 return 'image'
             else:
@@ -175,6 +173,6 @@ class Share(models.Model):
                 return True
         return False
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 

@@ -15,6 +15,7 @@ from taggit.models import Tag, TaggedItem
 from unidecode import unidecode
 from taggit_autosuggest.managers import TaggableManager
 from treebeard.mp_tree import MP_Node
+from vcms.utils import id_to_hash
 
 from vcms.utils import unique_slug
 
@@ -66,6 +67,7 @@ class Category(models.Model):
 
 
 class Content(MP_Node):
+    HASH_LENGTH = 8
     TYPE_PAGE = 'page'
     TYPE_GALLERY = 'gallery'
     type_choices = (
@@ -77,11 +79,12 @@ class Content(MP_Node):
     title = models.CharField(_(u'Title'), max_length=255, default='')
     url = models.CharField(_(u'Path'), max_length=255, default='', editable=False, db_index=True)
     slug = models.SlugField(verbose_name=_(u'Slug'), max_length=255, db_index=True)
+    template = models.CharField(_(u'Template'), choices=settings.VCMS_TEMPLATES, max_length=100, default='content_view')
     meta_keywords = models.CharField(_(u'Meta keywords'), max_length=255, default='', blank=True)
     meta_description = models.CharField(_(u'Meta description'), max_length=255, default='', blank=True)
     enabled = models.BooleanField(_(u'Enabled'), default=True, db_index=True)
     hidden = models.BooleanField(_(u'Is hidden'), default=False, db_index=True)
-    category = models.ForeignKey(Category, verbose_name=_(u'Category'), null=True, blank=True)
+    category = models.ManyToManyField(Category, verbose_name=_(u'Category'), blank=True)
     type = models.CharField(max_length=64, choices=type_choices, db_index=True, default=TYPE_PAGE)
     image = models.ImageField(upload_to=get_upload_path, blank=True)
     date_published = models.DateField(_(u'Date published'), default=timezone.now, db_index=True)
@@ -98,8 +101,12 @@ class Content(MP_Node):
         verbose_name = _(u'Content')
         verbose_name_plural = _(u'Content')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
+
+    @property
+    def hash(self):
+        return id_to_hash(self.id, length=self.HASH_LENGTH)
 
     @property
     def parent(self):
@@ -125,6 +132,19 @@ class Content(MP_Node):
         else:
             return gen_slug
 
+    def update_url(self):
+        url = self.slug
+        parent = self.get_parent(update=True)
+        if parent:
+            url = "%s/%s" % (parent.url, self.slug)
+
+        if self.url != url:
+            Content.objects.filter(id=self.pk).update(url=url)
+
+            children = self.get_children()
+            for child in children:
+                child.update_url()
+
     def save(self, *args, **kwargs):
         update_slug = False
         if self.pk is not None:
@@ -140,19 +160,9 @@ class Content(MP_Node):
                 # Content, 'slug', self.slug, query={'parent': self.parent, 'type': self.type}
             )
 
-            self.url = self.slug
-            parent = self.get_parent(update=True)
-            if parent:
-                self.url = "%s/%s" % (parent.url, self.url)
-            # if self.parent is not None:
-            #     parent = Content.objects.get(pk=self.parent.pk)
-            #     self.url = '%s/%s' % (parent.path, self.slug)
-            # else:
-            #     self.url = self.slug
-
-
-
         super(Content, self).save(*args, **kwargs)
+        if update_slug is True:
+            self.update_url()
 
 
 class Snippet(models.Model):
