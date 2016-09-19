@@ -62,7 +62,7 @@ def view_snippet(request, short_id, content_type='html'):
 
 @login_required
 def add_or_edit(request, short_id=''):
-    old_id = hash_to_id(short_id, 0)
+    old_id = hash_to_id(short_id, default=0)
 
     res = Share.objects.filter(pk=old_id, user=request.user)[:1]
     if res:

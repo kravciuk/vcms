@@ -59,7 +59,7 @@ def add_or_edit(request, content_type=None, parent=None):
             ins_type = instance.type
             instance.delete()
             messages.add_message(request, messages.INFO, _(u'Record deleted.'))
-            redirect(reverse('content_index_personal', args=[ins_type]))
+            redirect(reverse('content_index', args=[ins_type]))
         except Exception as e:
             messages.add_message(request, messages.ERROR, "%s %s" % (_(u'Failed to delete record.'), e))
             log.debug("Error deleting record: %s" % e)
@@ -81,6 +81,7 @@ def add_or_edit(request, content_type=None, parent=None):
                     instance = form.save(commit=False)
                     instance.user = request.user
                     instance.save()
+                    form.save_m2m()
                 messages.add_message(request, messages.INFO, _(u'Record saved.'))
                 return redirect("%s?page=%s" % (reverse('content_edit', args=['page']), instance.hash))
             else:
