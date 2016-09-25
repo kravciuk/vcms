@@ -8,10 +8,11 @@
     {% vcms_pages parent=content.url as records %}
 
         {% for record in records %}
-            <div style="margin-bottom: 30px;">
-                <h3>{{ record.title }}</h3>
-                {{ record.short_content|safe }}
-                <a href="{% url 'content_page' record.url %}">Полный текст</a>
+            <div class="row">
+                <div class="post">
+                    <a href="{% url 'content_page' record.url %}" class="blog-post-title">{{ record.title }}</a>
+                    {{ record.short_content|safe }}
+                </div>
             </div>
         {% endfor %}
 {% endblock %}

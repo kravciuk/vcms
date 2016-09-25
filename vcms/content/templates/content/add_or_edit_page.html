@@ -5,20 +5,6 @@
 
 {% block content %}
 
-
-
-    {% addtoblock 'js' %}
-<script src="{% static 'jquery/jquery-2.1.4.min.js' %}"></script>
-{#<script src="{% static 'jquery/jquery-ui.min.js' %}"></script>#}
-{#<script>#}
-{#    jQuery(document).ready(function ($) {#}
-{#        $(".tab-wrapper").tabs({#}
-{#            event: "click"#}
-{#        })#}
-{#    });#}
-{#</script>#}
-    {% endaddtoblock %}
-
 {{ form.media.css }}
 <style type="text/css">
 ul.as-selections li.as-original input {
@@ -40,9 +26,8 @@ ul.as-selections li.as-original input {
         {% csrf_token %}
             {{  form.after }}
             {{ form.page }}
-        <div class="row">
-            <div class="col-md-12">
-                {{ form.non_field_errors }}
+        <div>
+            {{ form.non_field_errors }}
 
             <div class="row">
                 <div class="fieldWrapper">
@@ -69,21 +54,17 @@ ul.as-selections li.as-original input {
             </div>
 
             <div class="row">
-                <div class="col_1_3">
-                    <div class="fieldWrapper">
+                <div class="col_1_3 ng">
                         {{ form.tags.errors }}
                         <label for="{{ form.tags.id_for_label }}">Tags:</label>
                         {{ form.tags }}
-                    </div>
                 </div>
-                <div class="col_1_3">
-                    <div class="fieldWrapper">
+                <div class="col_1_3 ng">
                         {{ form.template.errors }}
                         <label for="{{ form.template.id_for_label }}">Template:</label>
                         {{ form.template }}
-                    </div>
                 </div>
-                <div class="col_1_3">
+                <div class="col_1_3 ng">
                     {{ form.category.errors }}
                     <label for="{{ form.category.id_for_label }}">Category:</label>
                     {{ form.category }}
@@ -128,7 +109,6 @@ ul.as-selections li.as-original input {
                 </div>
             </div>
 
-            </div>
         </div>
     </form>
     <script type="text/javascript" src="/static/admin/js/urlify.js"></script>

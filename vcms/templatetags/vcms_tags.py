@@ -102,10 +102,8 @@ def last_snippets(snippet_type='source', limit=20, show_hidden=False):
 def content_url(obj):
     if obj.type == 'gallery':
         return reverse('content_gallery', args=[obj.path])
-    elif obj.type == 'news':
-        return reverse('content_news', args=[obj.path])
     else:
-        return reverse('content_page', args=[obj.path])
+        return reverse('content_page', args=[obj.url])
 
 
 @register.simple_tag(takes_context=True)

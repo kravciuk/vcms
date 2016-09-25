@@ -26,7 +26,7 @@
                         <td><a href="{% content_url record  %}">{{ record.title }}</a> </td>
                         <td>
                             {% if record.user == request.user %}
-                                <a href="{% url 'content_edit' content_type %}?id={{ record.id }}">edit</a>
+                                <a href="{% url 'content_edit' content_type %}?id={{ record.hash }}">edit</a>
                             {% endif %}
                         </td>
                     </tr>

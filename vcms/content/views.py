@@ -26,7 +26,7 @@ def index(request, owner=False, content_type="page"):
     if owner is True:
         full_listing = full_listing.filter(user=request.user)
 
-    paginator = FlynsarmyPaginator(full_listing.order_by('-parent'), 30, adjacent_pages=20)
+    paginator = FlynsarmyPaginator(full_listing.order_by('-id'), 30, adjacent_pages=20)
     page = request.GET.get('page')
 
     try:
@@ -59,7 +59,7 @@ def add_or_edit(request, content_type=None, parent=None):
             ins_type = instance.type
             instance.delete()
             messages.add_message(request, messages.INFO, _(u'Record deleted.'))
-            redirect(reverse('content_index', args=[ins_type]))
+            return redirect(reverse('content_index', args=[ins_type]))
         except Exception as e:
             messages.add_message(request, messages.ERROR, "%s %s" % (_(u'Failed to delete record.'), e))
             log.debug("Error deleting record: %s" % e)
