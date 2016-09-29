@@ -2,6 +2,7 @@
 __author__ = 'Vadim'
 
 import os
+import re
 from django.conf import settings
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -169,7 +170,8 @@ class Share(models.Model):
     @property
     def video_link(self):
         if self.url is not None:
-            if self.url.find('youtube'):
+            match = re.search('youtu|soundcloud|vimeo', self.url)
+            if match:
                 return True
         return False
 
