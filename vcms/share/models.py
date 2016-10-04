@@ -71,8 +71,8 @@ class Share(models.Model):
     views = models.IntegerField(default=0, editable=False)
     file_name = models.CharField(max_length=128, blank=True, null=True)
     thumbnail = models.CharField(max_length=255, null=True, editable=False)
-    time_created = models.DateTimeField(auto_now_add=True)
-    time_updated = models.DateTimeField(auto_now_add=True)
+    time_created = models.DateTimeField(auto_now_add=True, editable=False)
+    time_updated = models.DateTimeField(auto_now=True, editable=False)
     content_html = models.TextField(editable=False, blank=True, null=True)
 
     def save(self, *args, **kwargs):
