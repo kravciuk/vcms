@@ -82,7 +82,7 @@ def add_or_edit(request, short_id=''):
             # format content
             if instance.content != '':
                 lexer = get_lexer_by_name(instance.type, stripall=True)
-                formatter = HtmlFormatter(linenos=True, cssclass="source")
+                formatter = HtmlFormatter(linenos=True, cssclass="codehilite")
                 instance.content_html = highlight(instance.content, lexer, formatter)
 
             if request.FILES.get('file'):
