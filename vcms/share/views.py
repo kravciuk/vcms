@@ -72,6 +72,9 @@ def add_or_edit(request, short_id=''):
     form = AddSnippetForm(instance=instance)
 
     if request.method == 'POST':
+        if request.POST.get('delete') and instance is not None:
+            instance.delete()
+            return redirect('share_personal')
 
         form = AddSnippetForm(request.POST, request.FILES, instance=instance)
         if form.is_valid():
@@ -86,6 +89,10 @@ def add_or_edit(request, short_id=''):
                 instance.content_html = highlight(instance.content, lexer, formatter)
 
             if request.FILES.get('file'):
+                if instance.pk:
+                    instance.thumbnail = None
+                    instance.rm_files()
+
                 result = _upload_file(request.FILES['file'], password=instance.password)
                 file_full_path = os.path.join(result.raw_path, result.name)
                 instance.file_name = request.FILES['file'].name[:128]
@@ -108,7 +115,10 @@ def add_or_edit(request, short_id=''):
             instance.save()
             return redirect('share_snippet', short_id=instance.short_id)
 
-    return render(request, 'share/form.html', {'form': form})
+    return render(request, 'share/form.html', {
+        'form': form,
+        'instance': instance,
+    })
 
 
 def _upload_file(file_object, password=None):

@@ -86,7 +86,10 @@
 </div>
 
             </div>
-            <input type="submit">
+            <input type="submit" name="save">
+            {% if instance.id %}
+            <input type="submit" name="delete" class="button_red" value="Удалить">
+            {% endif %}
         </div>
     </form>
 {{ form.media.js }}

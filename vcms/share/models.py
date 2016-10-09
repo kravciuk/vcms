@@ -9,10 +9,14 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
+from django.dispatch import receiver
 from taggit_autosuggest.managers import TaggableManager
 from markdown import markdown
 from hashids import Hashids
 from datetime import datetime
+
+import logging
+log = logging.getLogger(__name__)
 
 SHARE_UPLOADED_DIR = settings.VCMS_SHARE_UPLOADED_DIR
 SHARE_PROTECTED_DIR = settings.VCMS_SHARE_PROTECTED_DIR
@@ -75,6 +79,17 @@ class Share(models.Model):
     time_updated = models.DateTimeField(auto_now=True, editable=False)
     content_html = models.TextField(editable=False, blank=True, null=True)
 
+    def rm_files(self):
+        try:
+            if self.thumbnail and self.pk:
+                log.debug("Request to delete thumbnail: %s" % self.thumbnail)
+                os.remove(os.path.join(settings.MEDIA_ROOT, self.thumbnail))
+            if self.file and self.pk:
+                log.debug("Request to delete file: %s" % self.file.name)
+                os.remove(os.path.join(settings.MEDIA_ROOT, self.file.name))
+        except Exception as e:
+            log.error('Cannot remove files for share with id: %s. Error: %s' % (self.pk, e))
+
     def save(self, *args, **kwargs):
         if self.description is not None:
             self.description_html = markdown(self.description, ['codehilite'])
@@ -96,6 +111,9 @@ class Share(models.Model):
 
         self.type = self.file_type()
         self.get_title()
+
+        if not self.file:
+            self.thumbnail = None
 
         super(Share, self).save()
 
@@ -178,3 +196,17 @@ class Share(models.Model):
     def __str__(self):
         return self.title
 
+
+@receiver(models.signals.pre_save, sender=Share)
+def share_on_change(sender, instance, **kwargs):
+    if instance.pk:
+        obj = Share.objects.get(pk=instance.pk)
+        print("Old file: %s" % obj.file)
+        print("Current file: %s" % instance.file)
+        if not instance.file or instance.file != obj.file:
+            log.debug('Deleting old files')
+            obj.rm_files()
+
+@receiver(models.signals.pre_delete, sender=Share)
+def share_on_delete(sender, instance, **kwargs):
+    instance.rm_files()
