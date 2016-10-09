@@ -37,16 +37,20 @@ def link_redirect(request, short_id):
 
 def download_file(request, short_id):
     content = get_object_or_404(Share, slug=short_id, disabled=False)
+
     if content.file:
-        file_path = os.path.join(settings.MEDIA_ROOT, str(content.file))
-        return sendfile(
-            request,
-            file_path,
-            attachment=True,
-            attachment_filename=content.file_name
-        )
-    else:
-        return HttpResponseNotFound('File not found.')
+        file_path = os.path.join(settings.MEDIA_ROOT, content.file.name)
+        if os.path.exists(file_path):
+            return sendfile(
+                request,
+                file_path,
+                attachment=True,
+                attachment_filename=content.file_name
+            )
+        else:
+            log.error("Snippet %s, cannot file for download: %s" % (content.slug, file_path))
+
+    return HttpResponseNotFound('File not found.')
 
 
 def view_snippet(request, short_id, content_type='html'):
