@@ -40,15 +40,12 @@ def download_file(request, short_id):
 
     if content.file:
         file_path = os.path.join(settings.MEDIA_ROOT, content.file.name)
-        if os.path.exists(file_path):
-            return sendfile(
-                request,
-                file_path,
-                attachment=True,
-                attachment_filename=content.file_name
-            )
-        else:
-            log.error("Snippet %s, cannot file for download: %s" % (content.slug, file_path))
+        return sendfile(
+            request,
+            file_path,
+            attachment=True,
+            attachment_filename=content.file_name
+        )
 
     return HttpResponseNotFound('File not found.')
 
