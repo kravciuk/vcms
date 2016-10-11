@@ -23,11 +23,7 @@
                 <tbody>
                 {% for share in shares %}
                     <tr>
-                        <td><a href="{% web_path %}{{ share.view }}">{{ share.title }}</a>
-                            {% if share.user == request.user %}
-                                ( <a href="{% url 'share_edit' share.short_id %}">edit</a> )
-                            {% endif %}
-                        </td>
+                        <td><a href="{% web_path %}{{ share.view }}">{{ share.title }}</a></td>
                         <td>{{ share.type }}</td>
                     </tr>
                 {% endfor %}
