@@ -56,9 +56,16 @@ def unique_slug(instance, slug_field, slug, counter=0, query=None):
 
 def encrypt(key, plaintext):
     cipher = XOR.new(key)
-    return base64.b64encode(cipher.encrypt(plaintext))
+    string = base64.b64encode(cipher.encrypt(plaintext)).decode()
+    pad_count = string.count('=')
+    return "%s%s" % (string.replace('=', ''), pad_count)
 
 
 def decrypt(key, ciphertext):
-    cipher = XOR.new(key)
-    return cipher.decrypt(base64.b64decode(ciphertext))
+    try:
+        cipher = XOR.new(key)
+        i = int(ciphertext[-1])
+        ciphertext = "%s%s" % (ciphertext[:-1], '='*i)
+        return cipher.decrypt(base64.b64decode(ciphertext))
+    except Exception as e:
+        return None

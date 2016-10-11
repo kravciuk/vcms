@@ -42,7 +42,7 @@ def download_file(request, short_id, enc_key):
     expiration_time = 0
     allowed_ip = '127.0.0.1'
     try:
-        dec_string = decrypt(settings.SECRET_KEY[0:5], enc_key+'=').decode().split(' ')
+        dec_string = decrypt(settings.SECRET_KEY[0:5], enc_key).decode().split(' ')
         expiration_time = dec_string[0]
         allowed_ip = dec_string[1]
     except:
