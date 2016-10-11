@@ -4,6 +4,8 @@ __author__ = 'Vadim Kravciuk, vadim@kravciuk.com'
 import os
 from hashids import Hashids
 from django.conf import settings
+import base64
+from Crypto.Cipher import XOR
 
 
 def id_to_hash(short_id, salt=None, length=4):
@@ -50,3 +52,13 @@ def unique_slug(instance, slug_field, slug, counter=0, query=None):
         return unique_slug(instance, slug_field, slug, counter, query)
     else:
         return test_slug
+
+
+def encrypt(key, plaintext):
+    cipher = XOR.new(key)
+    return base64.b64encode(cipher.encrypt(plaintext))
+
+
+def decrypt(key, ciphertext):
+    cipher = XOR.new(key)
+    return cipher.decrypt(base64.b64decode(ciphertext))

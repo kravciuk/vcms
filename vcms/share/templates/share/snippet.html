@@ -53,7 +53,7 @@
 		</div>
     {% elif snippet.file %}
 		<div class="row">
-			<div class="col-md-12"><a href="{% url 'share_download_file' snippet.short_id %}">Download file</a></div>
+			<div class="col-md-12"><a href="{% share_download_url snippet %}">Download file</a></div>
         </div>
 	{% endif %}
 
@@ -79,7 +79,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            {% if snippet.file and snippet.type == 'source' %}<a href="/media/{{ snippet.file }}" class="btn btn-success">Скачать {{ snippet.file_name }}</a>{% endif %}
+            {% if snippet.file and snippet.type == 'source' %}<a href="{% share_download_url snippet %}" class="btn btn-success">Скачать {{ snippet.file_name }}</a>{% endif %}
 			{% if snippet.content_html %}<a href="http://{{ request.get_host }}{% url 'share_snippet' snippet.short_id %}raw/" class="btn btn-success">Исходник</a>{% endif %}
             {% if request.user.id == snippet.user_id %}<a href="{% url "share_edit" snippet.short_id %}" class="btn btn-success">Редактировать</a>{% endif %}
         </div>

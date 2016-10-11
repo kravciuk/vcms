@@ -2,12 +2,14 @@
 __author__ = 'Vadim Kravciuk, vadim@kravciuk.com'
 
 import re
+import time
 from django import template
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
 from vcms.content.models import *
 from vcms.share.models import *
+from vcms.utils import encrypt
 
 register = template.Library()
 import logging as log
@@ -96,6 +98,14 @@ def last_snippets(snippet_type='source', limit=20, show_hidden=False):
     return {
         'records': res
     }
+
+
+@register.simple_tag(takes_context=True)
+def share_download_url(context, obj):
+    remote_addr = context['request'].META['REMOTE_ADDR']
+    timestamp = int(time.time())
+    encrypted_key = encrypt(settings.SECRET_KEY[0:5], "%s %s" % (timestamp, remote_addr)).decode()
+    return reverse('share_download_file', args=[obj.short_id, encrypted_key[:-1]])
 
 
 @register.simple_tag

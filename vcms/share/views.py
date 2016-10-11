@@ -2,7 +2,9 @@
 __author__ = 'Vadim'
 
 import os
+import re
 from datetime import datetime
+from time import time
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -15,7 +17,7 @@ from sendfile import sendfile
 
 from .forms import AddSnippetForm
 from .models import Share, SHARE_PROTECTED_DIR, SHARE_UPLOADED_DIR
-from vcms.utils import hash_to_id, unique_file_name
+from vcms.utils import hash_to_id, unique_file_name, encrypt, decrypt
 
 from flynsarmy_paginator.paginator import FlynsarmyPaginator
 
@@ -23,7 +25,6 @@ from pygments import highlight
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters import HtmlFormatter
 
-import re
 import logging as log
 
 
@@ -35,10 +36,27 @@ def link_redirect(request, short_id):
         return HttpResponseNotFound('Link not found.')
 
 
-def download_file(request, short_id):
+def download_file(request, short_id, enc_key):
     content = get_object_or_404(Share, slug=short_id, disabled=False)
 
-    if content.file:
+    expiration_time = 0
+    allowed_ip = '127.0.0.1'
+    try:
+        dec_string = decrypt(settings.SECRET_KEY[0:5], enc_key+'=').decode().split(' ')
+        expiration_time = dec_string[0]
+        allowed_ip = dec_string[1]
+    except:
+        pass
+
+    allow_download = True
+    if int(time()) > int(expiration_time) + settings.VCMS_DOWNLOAD_TIME_LIMIT:
+        allow_download = False
+        log.debug("Time expired")
+    if allowed_ip != request.META['REMOTE_ADDR']:
+        allow_download = False
+        log.debug('IP not equal')
+
+    if content.file and allow_download is True:
         file_path = os.path.join(settings.MEDIA_ROOT, content.file.name)
         return sendfile(
             request,
@@ -46,8 +64,8 @@ def download_file(request, short_id):
             attachment=True,
             attachment_filename=content.file_name
         )
-
-    return HttpResponseNotFound('File not found.')
+    else:
+        return redirect('share_snippet', short_id=short_id)
 
 
 def view_snippet(request, short_id, content_type='html'):
