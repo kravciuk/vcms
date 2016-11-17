@@ -41,8 +41,9 @@ class AddSnippetForm(forms.ModelForm):
 
         content = cleaned_data.get('content', '').strip()
         url = cleaned_data.get('url', '').strip()
+        description = cleaned_data.get('description', '').strip()
 
-        if not content and not url and 'file' not in self.files:
+        if not content and not description and not url and 'file' not in self.files:
             raise forms.ValidationError('Please upload a image or add content text.')
 
         return cleaned_data
