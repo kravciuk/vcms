@@ -106,6 +106,8 @@ def add_or_edit(request, short_id=''):
                 lexer = get_lexer_by_name(instance.type, stripall=True)
                 formatter = HtmlFormatter(linenos=True, cssclass="codehilite")
                 instance.content_html = highlight(instance.content, lexer, formatter)
+            else:
+                instance.content_html = None
 
             if request.FILES.get('file'):
                 if instance.pk:

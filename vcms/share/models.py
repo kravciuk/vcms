@@ -201,8 +201,6 @@ class Share(models.Model):
 def share_on_change(sender, instance, **kwargs):
     if instance.pk:
         obj = Share.objects.get(pk=instance.pk)
-        print("Old file: %s" % obj.file)
-        print("Current file: %s" % instance.file)
         if not instance.file or instance.file != obj.file:
             log.debug('Deleting old files')
             obj.rm_files()
