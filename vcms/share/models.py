@@ -77,7 +77,7 @@ class Share(models.Model):
     thumbnail = models.CharField(max_length=255, null=True, editable=False)
     time_created = models.DateTimeField(auto_now_add=True, editable=False)
     time_updated = models.DateTimeField(auto_now=True, editable=False)
-    time_delete = models.DateField(default=None)
+    time_delete = models.DateField(default=None, blank=True, null=True)
     content_html = models.TextField(editable=False, blank=True, null=True)
 
     def rm_files(self):
