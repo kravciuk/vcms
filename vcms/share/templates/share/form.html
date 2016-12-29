@@ -5,6 +5,100 @@
 
 {% block content %}
 
+{% addtoblock 'css' %}
+
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<style>
+.tabs {
+	min-width: 320px;
+	max-width: 100%;
+	padding: 0px;
+	margin: 0 auto;
+}
+.tabs>section {
+	display: none;
+	padding: 15px;
+	background: #fff;
+	border: 1px solid #ddd;
+}
+.tabs>section>p {
+	margin: 0 0 5px;
+	line-height: 1.5;
+	color: #383838;
+	-webkit-animation-duration: 1s;
+	animation-duration: 1s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+	-webkit-animation-name: fadeIn;
+	animation-name: fadeIn;
+}
+@-webkit-keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+.tabs>input {
+	display: none;
+	position: absolute;
+}
+.tabs>label {
+	display: inline-block;
+	margin: 0 0 -1px;
+	padding: 15px 25px;
+	font-weight: 600;
+	text-align: center;
+	color: #aaa;
+	border: 0px solid #ddd;
+	border-width: 1px 1px 1px 1px;
+	background: #f1f1f1;
+	border-radius: 3px 3px 0 0;
+}
+.tabs>label:before {
+	font-family: fontawesome;
+	font-weight: normal;
+	margin-right: 10px;
+}
+.tabs>label:hover {
+	color: #888;
+	cursor: pointer;
+}
+.tabs>input:checked+label {
+	color: #555;
+	border-top: 1px solid #009933;
+	border-bottom: 1px solid #fff;
+	background: #fff;
+}
+#tab1:checked~#content-tab1, #tab2:checked~#content-tab2, #tab3:checked~#content-tab3, #tab4:checked~#content-tab4 {
+	display: block;
+}
+@media screen and (max-width: 680px) {
+	.tabs>label {
+		font-size: 0;
+	}
+	.tabs>label:before {
+		margin: 0;
+		font-size: 18px;
+	}
+}
+@media screen and (max-width: 400px) {
+	.tabs>label {
+		padding: 15px;
+	}
+}
+</style>
+{% endaddtoblock %}
+
     {% addtoblock 'js' %}
 <script src="{% static 'jquery/jquery-ui.min.js' %}"></script>
 <script>
@@ -13,84 +107,101 @@
             event: "click"
         })
     });
+
+  jQuery(document).ready(function ($) {
+    $( "#id_time_delete" ).datepicker({dateFormat: 'yy-dd-mm'});
+  } );
 </script>
     {% endaddtoblock %}
 
 {{ form.media.css }}
 	<h2>Добавить новую запись</h2>
 
-        <form action="" method="post" accept-charset="utf-8" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="row">
-            <div class="col-md-12">
-                {{ form.non_field_errors }}
+    <form action="" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-12">
+            {{ form.non_field_errors }}
 
-<div class="fieldWrapper">
-    {{ form.title.errors }}
-    <label for="{{ form.title.id_for_label }}">Title:</label>
-    {{ form.title }}
-</div>
+            <div class="fieldWrapper">
+                {{ form.title.errors }}
+                <label for="{{ form.title.id_for_label }}">Title:</label>
+                {{ form.title }}
+            </div>
 
-<div class="fieldWrapper">
-    {{ form.description.errors }}
-    <label for="{{ form.description.id_for_label }}">Description:</label>
-    {{ form.description }}
-</div>
+            <div class="fieldWrapper">
+                {{ form.description.errors }}
+                <label for="{{ form.description.id_for_label }}">Description:</label>
+                {{ form.description }}
+            </div>
 
-                <div class="tab-wrapper clear">
-                    <ul class="tab-nav clear">
-                        <li><a href="#tab-1">Text content</a></li>
-                        <li><a href="#tab-2">Upload content</a></li>
-                        <li><a href="#tab-3">URL redirect</a></li>
-                    </ul>
-                    <div class="tab-container">
+            <div class="tabs">
+                <input id="tab1" type="radio" name="tabs" checked>
+                <label for="tab1" title="Wordpress">Text content</label>
+                <input id="tab2" type="radio" name="tabs">
+                <label for="tab2" title="Windows">Upload content</label>
+                <input id="tab3" type="radio" name="tabs">
+                <label for="tab3" title="HTML5">URL redirect</label>
+                <section id="content-tab1">
+                    <div class="fieldWrapper">
+                        {{ form.content.errors }}
+                        <label for="{{ form.content.id_for_label }}">Content:</label>
+                        {{ form.content }}
+                    </div>
+                </section>
+                <section id="content-tab2">
+                    <div class="fieldWrapper">
+                        {{ form.file.errors }}
+                        <label for="{{ form.file.id_for_label }}">File:</label>
+                        {{ form.file }}
+                    </div>
+                </section>
+                <section id="content-tab3">
+                    <div class="fieldWrapper">
+                        {{ form.url.errors }}
+                        <label for="{{ form.url.id_for_label }}">URL:</label>
+                        {{ form.url }}
+                    </div>
+                </section>
+            </div>
 
-                        <div id="tab-1" class="tab-content clear">
-                            <div class="fieldWrapper">
-                                {{ form.content.errors }}
-                                <label for="{{ form.content.id_for_label }}">Content:</label>
-                                {{ form.content }}
-                            </div>
-                        </div>
-
-                        <div id="tab-2" class="tab-content clear">
-                            <div class="fieldWrapper">
-                                {{ form.file.errors }}
-                                <label for="{{ form.file.id_for_label }}">File:</label>
-                                {{ form.file }}
-                            </div>
-                        </div>
-
-                        <div id="tab-3" class="tab-content clear">
-                            <div class="fieldWrapper">
-                                {{ form.url.errors }}
-                                <label for="{{ form.url.id_for_label }}">URL:</label>
-                                {{ form.url }}
-                            </div>
-                        </div>
-
+            <div class="row">
+                <div class="col_1_4">
+                    <div class="fieldWrapper">
+                        {{ form.tags.errors }}
+                        <label for="{{ form.tags.id_for_label }}">Tags:</label>
+                        {{ form.tags }}
                     </div>
                 </div>
-
-
-<div class="fieldWrapper">
-    {{ form.tags.errors }}
-    <label for="{{ form.tags.id_for_label }}">Tags:</label>
-    {{ form.tags }}
-</div>
-
-<div class="fieldWrapper">
-    {{ form.type.errors }}
-    <label for="{{ form.type.id_for_label }}">Type:</label>
-    {{ form.type }}
-</div>
-
+                <div class="col_1_4">
+                    <div class="fieldWrapper">
+                        {{ form.type.errors }}
+                        <label for="{{ form.type.id_for_label }}">Type:</label>
+                        {{ form.type }}
+                    </div>
+                </div>
+                <div class="col_1_4">
+                    <div class="fieldWrapper">
+                        {{ form.hidden.errors }}
+                        Hidden: {% render_field form.hidden %}
+                    </div>
+                </div>
+                <div class="col_1_4">
+                    <div class="fieldWrapper">
+                        {{ form.time_delete.errors }}
+                        Delete on: {% render_field form.time_delete %}
+                    </div>
+                </div>
             </div>
-            <input type="submit" name="save">
-            {% if instance.id %}
-            <input type="submit" name="delete" class="button_red" value="Удалить">
-            {% endif %}
+
+            <div class="row">
+                <input type="submit" name="save">
+                {% if instance.id %}
+                <input type="submit" name="delete" class="button_red" value="Удалить">
+                {% endif %}
+            </div>
         </div>
+    </div>
     </form>
 {{ form.media.js }}
 {% endblock %}

@@ -17,7 +17,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Internet',
-        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
     ],
 )
