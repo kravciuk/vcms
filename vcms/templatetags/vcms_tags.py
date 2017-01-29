@@ -79,7 +79,10 @@ def vcms_pages(*args, **kwargs):
     rs = Content.objects.filter(enabled=True)
 
     if parent:
-        rs = rs.filter(url=parent).get().get_children()
+        try:
+            rs = rs.filter(url=parent).get().get_children()
+        except:
+            return []
 
     if category:
         rs = rs.filter(category__slug=category)
