@@ -25,7 +25,15 @@ from pygments import highlight
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters import HtmlFormatter
 
-import logging as log
+import logging
+log = logging.getLogger(__name__)
+
+
+def download_forbidden(request, short_id):
+    content = get_object_or_404(Share, slug=short_id, disabled=False)
+    return render(request, 'share/download_forbiden.html', {
+        'snippet': content,
+    }, status=403)
 
 
 def link_redirect(request, short_id):
@@ -39,22 +47,24 @@ def link_redirect(request, short_id):
 def download_file(request, short_id, enc_key):
     content = get_object_or_404(Share, slug=short_id, disabled=False)
 
+    allow_download = True
     expiration_time = 0
     allowed_ip = '127.0.0.1'
     try:
         dec_string = decrypt(settings.SECRET_KEY[0:5], enc_key).decode().split(' ')
         expiration_time = dec_string[0]
         allowed_ip = dec_string[1]
-    except:
-        pass
 
-    allow_download = True
-    if int(time()) > int(expiration_time) + settings.VCMS_DOWNLOAD_TIME_LIMIT:
+        if int(time()) > int(expiration_time) + settings.VCMS_DOWNLOAD_TIME_LIMIT:
+            allow_download = False
+            log.error("%s for object %s download - time expired." % (request.META['REMOTE_ADDR'], short_id))
+
+        if allowed_ip != request.META['REMOTE_ADDR']:
+            allow_download = False
+            log.error("%s for object %s download - IP failed, accepted %s." % (request.META['REMOTE_ADDR'], short_id, allowed_ip))
+    except:
         allow_download = False
-        log.debug("Time expired")
-    if allowed_ip != request.META['REMOTE_ADDR']:
-        allow_download = False
-        log.debug('IP not equal')
+        log.error("%s for object %s download - failed decode string." % (request.META['REMOTE_ADDR'], short_id))
 
     if content.file and allow_download is True:
         file_path = os.path.join(settings.MEDIA_ROOT, content.file.name)
@@ -65,7 +75,7 @@ def download_file(request, short_id, enc_key):
             attachment_filename=content.file_name
         )
     else:
-        return redirect('share_snippet', short_id=short_id)
+        return redirect('share_download_forbidden', short_id=short_id)
 
 
 def view_snippet(request, short_id, content_type='html'):

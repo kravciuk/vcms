@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load staticfiles sekizai_tags embed_video_tags %}
+
+{% block title %}Access forbiden{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-12">
+                <h4>Access forbiden</h4>
+                Download url has been expired. Please visit <a href="{% url "share_snippet" snippet.short_id %}">original snippet url</a> to receive correct downlod link.
+        </div>
+    </div>
+
+{% endblock %}
