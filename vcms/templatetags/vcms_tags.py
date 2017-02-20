@@ -66,8 +66,8 @@ def vcms_page(*args, **kwargs):
     try:
         return Content.objects.filter(enabled=True, url=url).get()
     except Exception as e:
-        log.error('Cannot get page by url: '% url)
-        return ''
+        log.error('Cannot get page by url: %s'% url)
+        return None
 
 
 @register.assignment_tag
