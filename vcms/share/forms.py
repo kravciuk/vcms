@@ -48,3 +48,5 @@ class AddSnippetForm(forms.ModelForm):
 
         return cleaned_data
 
+class FileUploadForm(forms.Form):
+    file = forms.FileField()

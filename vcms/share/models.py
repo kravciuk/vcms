@@ -198,6 +198,24 @@ class Share(models.Model):
         return self.title
 
 
+class File(models.Model):
+    user = models.ForeignKey(User, default=1)
+    share = models.ForeignKey(Share, blank=True, null=True, related_name='file_share')
+    file = models.FileField(_(u'File'))
+    name = models.CharField(_(u'Name'), max_length=255)
+    mime = models.CharField(max_length=128, blank=True, null=True)
+    width = models.IntegerField(default=0)
+    height = models.IntegerField(default=0)
+    thumbnail = models.CharField(blank=True, null=True, max_length=255)
+    size = models.IntegerField(default=0)
+    comment = models.TextField(_(u'Comments'), blank=True, null=True)
+    uuid = models.CharField(max_length=36, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
 @receiver(models.signals.pre_save, sender=Share)
 def share_on_change(sender, instance, **kwargs):
     if instance.pk:
@@ -205,6 +223,7 @@ def share_on_change(sender, instance, **kwargs):
         if not instance.file or instance.file != obj.file:
             log.debug('Deleting old files')
             obj.rm_files()
+
 
 @receiver(models.signals.pre_delete, sender=Share)
 def share_on_delete(sender, instance, **kwargs):
