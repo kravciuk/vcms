@@ -89,6 +89,7 @@ class Content(MP_Node):
     image = models.ImageField(upload_to=get_upload_path, blank=True)
     date_published = models.DateField(_(u'Date published'), default=timezone.now, db_index=True)
     content = RichTextUploadingField(_(u'Content'), blank=True)
+    comments = models.BooleanField(_(u'Allow comments'), default=False)
 
     tags = TaggableManager(_(u'Tags'), through=PostTaggedItem, blank=True)
     rating = models.IntegerField(_(u'Rating'), default=0)
@@ -103,6 +104,9 @@ class Content(MP_Node):
 
     def __str__(self):
         return self.title
+
+    def allow_comment(self):
+        return self.comments
 
     @property
     def hash(self):

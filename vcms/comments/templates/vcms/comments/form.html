@@ -1,0 +1,9 @@
+{% if obj.allow_comment %}
+    {% if request.user.is_authenticated %}
+        <textarea style="width: 100%; height: 100px;">
+    {% else %}
+        {% include 'login_block.html' %}
+    {% endif %}
+
+</textarea>
+{% endif %}

@@ -6,6 +6,7 @@ import time
 from django import template
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
+from django.contrib.contenttypes.models import ContentType
 
 from vcms.content.models import *
 from vcms.share.models import *
@@ -13,6 +14,17 @@ from vcms.utils import encrypt
 
 register = template.Library()
 import logging as log
+
+
+@register.inclusion_tag('vcms/comments/form.html', takes_context=True)
+def vcms_comment(context, obj):
+    d = ContentType.objects.get_for_model(obj)
+    print(d.id)
+    print(obj.pk)
+    return {
+        'obj': obj,
+        'request': context['request'],
+    }
 
 
 @register.simple_tag(takes_context=True)
