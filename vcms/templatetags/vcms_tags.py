@@ -19,8 +19,8 @@ import logging as log
 @register.inclusion_tag('vcms/comments/form.html', takes_context=True)
 def vcms_comment(context, obj):
     d = ContentType.objects.get_for_model(obj)
-    print(d.id)
-    print(obj.pk)
+    # print(d.id)
+    # print(obj.pk)
     return {
         'obj': obj,
         'request': context['request'],
