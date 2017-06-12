@@ -3,6 +3,7 @@ __author__ = 'Vadim Kravciuk, vadim@kravciuk.com'
 
 import re
 import time
+from django.conf import settings
 from django import template
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -19,10 +20,9 @@ import logging as log
 @register.inclusion_tag('vcms/comments/form.html', takes_context=True)
 def vcms_comment(context, obj):
     d = ContentType.objects.get_for_model(obj)
-    # print(d.id)
-    # print(obj.pk)
     return {
         'obj': obj,
+        'parent': encrypt(settings.SECRET_KEY[:6], "%s:%s" % (d.pk, obj.pk)),
         'request': context['request'],
     }
 
