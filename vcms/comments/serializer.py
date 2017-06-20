@@ -40,7 +40,6 @@ class CommentSerializer(serializers.Serializer):
         x.content_type_id = int(content_type_id)
         x.content_pk = int(content_pk)
         try:
-            print("Comment saved")
             x.save()
         except Exception as e:
             log.error(e)
