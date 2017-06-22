@@ -11,6 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from vcms.content.models import *
 from vcms.share.models import *
+from vcms.comments.models import Comment
 from vcms.utils import encrypt
 
 register = template.Library()
@@ -19,8 +20,19 @@ import logging as log
 
 @register.inclusion_tag('vcms/comments/form.html', takes_context=True)
 def vcms_comment(context, obj):
+    moderate_permission = False
+
     d = ContentType.objects.get_for_model(obj)
+    rs = Comment.objects.filter(content_type=d, content_pk=obj.pk)
+    if context['request'].user.is_superuser is False:
+        rs = rs.filter(approved=True)
+
+    if context['request'].user.is_superuser is True:
+        moderate_permission = True
+
     return {
+        'moderate_permission': moderate_permission,
+        'records': rs,
         'obj': obj,
         'parent': encrypt(settings.SECRET_KEY[:6], "%s:%s" % (d.pk, obj.pk)),
         'request': context['request'],

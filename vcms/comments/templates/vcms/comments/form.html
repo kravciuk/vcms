@@ -1,4 +1,13 @@
 
+{% for record in records %}
+    <div class="row">
+
+        <div class="col_1_6" {% if not record.approved %}style="background-color: #e0bf6e"{% endif %}>{{ record.user }}</div>
+        <div class="col_5_6">{% if moderate_permission %}
+            Approve / Delete
+        {% endif %}<blockquote>{{ record.comment }}</blockquote></div>
+    </div>
+{% endfor %}
 
 {% if obj.allow_comment %}
     {% if request.user.is_authenticated %}
