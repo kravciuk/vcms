@@ -13,8 +13,20 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class CommentSerializer(serializers.Serializer):
-    comment = serializers.CharField(max_length=200)
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = '__all__'
+
+
+class CommentAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('approved', 'disabled')
+
+
+class CommentPostSerializer(serializers.Serializer):
+    comment = serializers.CharField()
     comment_for = serializers.CharField(max_length=200, write_only=True)
     comment_to = serializers.CharField(max_length=200, allow_blank=True, write_only=True)
     user = serializers.HiddenField(
@@ -23,7 +35,7 @@ class CommentSerializer(serializers.Serializer):
 
     class Meta:
         model = Comment
-        fields = ('user', 'content_type', 'content_pk', 'comment')
+        fields = '__all__'
 
     def create(self, validated_data):
 
