@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags widget_tweaks sekizai_tags staticfiles i18n  %}
 
-{% block title %}Создание новой записи{% endblock %}
+{% block title %}{% trans 'Create new record' %}{% endblock %}
 
 {% block content %}
 
 {% addtoblock 'css' %}
 
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+{#  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">#}
 <style>
 .tabs {
 	min-width: 320px;
@@ -98,24 +98,19 @@
 }
 </style>
 {% endaddtoblock %}
-
     {% addtoblock 'js' %}
-<script src="{% static 'jquery/jquery-ui.min.js' %}"></script>
 <script>
     jQuery(document).ready(function ($) {
-        $(".tab-wrapper").tabs({
-            event: "click"
-        })
+        $('#id_time_delete').datepicker({format: 'yyyy-mm-dd'});
     });
-
-  jQuery(document).ready(function ($) {
-    $( "#id_time_delete" ).datepicker({dateFormat: 'yy-dd-mm'});
-  } );
 </script>
     {% endaddtoblock %}
-
 {{ form.media.css }}
-	<h2>Добавить новую запись</h2>
+<style type="text/css">
+ul.as-selections li.as-original input {  height: auto !important;  }
+#id_tags { display: none; !important;  }
+</style>
+	<h2>{% trans 'Create new record' %}</h2>
 
     <form action="" method="post" accept-charset="utf-8" enctype="multipart/form-data">
     {% csrf_token %}
@@ -166,6 +161,12 @@
             </div>
 
             <div class="row">
+                <div class="col_1_4 ng">
+                    <div class="fieldWrapper">
+                        {{ form.hidden.errors }}
+                        Hidden: {% render_field form.hidden %}
+                    </div>
+                </div>
                 <div class="col_1_4">
                     <div class="fieldWrapper">
                         {{ form.tags.errors }}
@@ -182,12 +183,6 @@
                 </div>
                 <div class="col_1_4">
                     <div class="fieldWrapper">
-                        {{ form.hidden.errors }}
-                        Hidden: {% render_field form.hidden %}
-                    </div>
-                </div>
-                <div class="col_1_4">
-                    <div class="fieldWrapper">
                         {{ form.time_delete.errors }}
                         Delete on: {% render_field form.time_delete %}
                     </div>
@@ -195,7 +190,7 @@
             </div>
 
             <div class="row">
-                <input type="submit" name="save">
+                <input type="submit" name="save" class="button_green" value="{% trans 'Submit' %}">
                 {% if instance.id %}
                 <input type="submit" name="delete" class="button_red" value="Удалить">
                 {% endif %}

@@ -2,6 +2,7 @@
 __author__ = 'Vadim'
 
 from django import forms
+from django.contrib.admin.widgets import AdminDateWidget
 from vcms.share.models import Share
 
 
@@ -28,6 +29,7 @@ class AddSnippetForm(forms.ModelForm):
     )
 
     type = forms.ChoiceField(choices=PYGMENTS_CHOISE)
+    # time_delete = forms.DateField(widget=AdminDateWidget())
 
     def __init__(self, *args, **kwargs):
         super(AddSnippetForm, self).__init__(*args, **kwargs)
@@ -36,17 +38,24 @@ class AddSnippetForm(forms.ModelForm):
         model = Share
         exclude = ['user', 'time_created', 'time_updated', 'views', 'disabled', 'slug', 'file_name']
 
+    class Media:
+        css = {
+            'all': ('datepicker/css/datepicker.css',)
+        }
+        js = ('datepicker/js/datepicker.min.js',)
+
     def clean(self):
         cleaned_data = super(AddSnippetForm, self).clean()
 
-        content = cleaned_data.get('content', '').strip()
-        url = cleaned_data.get('url', '').strip()
-        description = cleaned_data.get('description', '').strip()
+        content = (cleaned_data.get('content') or '').strip()
+        url = (cleaned_data.get('url') or '').strip()
+        description = (cleaned_data.get('description') or '').strip()
 
         if not content and not description and not url and 'file' not in self.files:
             raise forms.ValidationError('Please upload a image or add content text.')
 
         return cleaned_data
+
 
 class FileUploadForm(forms.Form):
     file = forms.FileField()
