@@ -38,6 +38,7 @@ class MyWidget(Select2Widget):
 class PageContentForm(forms.ModelForm):
     after = forms.CharField(widget=forms.HiddenInput(), required=False)
     page = forms.CharField(widget=forms.HiddenInput(), required=False)
+    rehost = forms.BooleanField(required=False, initial=False)
 
     def __init__(self, *args, **kwargs):
         super(PageContentForm, self).__init__(*args, **kwargs)

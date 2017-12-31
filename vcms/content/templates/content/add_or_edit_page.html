@@ -9,6 +9,7 @@
 <style type="text/css">
 ul.as-selections li.as-original input {  height: auto !important;  }
 #id_tags { display: none; !important;  }
+
 </style>
     <h2>{% if not form.page.value %}Добавить новую запись{% else %}Редактировать запись "<a href="{% url 'content_page' instance.url %}">{{ instance.title }}</a>"{% endif %}</h2>
 
@@ -98,6 +99,7 @@ ul.as-selections li.as-original input {  height: auto !important;  }
                     <div class="fieldWrapper">
                         {{ form.date_published.errors }}
                         Published: {% render_field form.date_published class="plain_datebox" %}
+                            {% render_field form.rehost %} rehost content
                     </div>
                 </div>
             </diw>

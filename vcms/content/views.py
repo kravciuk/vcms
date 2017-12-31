@@ -14,6 +14,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger
 from .forms import PageContentForm
 from .models import Content
 from vcms.utils import id_to_hash, hash_to_id
+from vcms.task import rehost_content
 from flynsarmy_paginator.paginator import FlynsarmyPaginator
 # from jfu.http import upload_receive, UploadResponse, JFUResponse
 
@@ -71,8 +72,7 @@ def add_or_edit(request, content_type=None, parent=None):
                 if form.cleaned_data.get('page'):
                     instance = form.save()
                 else:
-                    after = form.cleaned_data.get('after')
-                    if after:
+                    if form.cleaned_data.get('after'):
                         node = get_object_or_404(Content, id=hash_to_id(after, length=Content.HASH_LENGTH), user=request.user)
                         new_node = node.add_child(user=request.user)
                     else:
@@ -82,6 +82,10 @@ def add_or_edit(request, content_type=None, parent=None):
                     instance.user = request.user
                     instance.save()
                     form.save_m2m()
+
+                if form.cleaned_data.get('rehost'):
+                    rehost_content(instance.pk)
+
                 messages.add_message(request, messages.INFO, _(u'Record saved.'))
                 return redirect("%s?page=%s" % (reverse('content_edit', args=['page']), instance.hash))
             else:
@@ -90,7 +94,9 @@ def add_or_edit(request, content_type=None, parent=None):
             form = PageContentForm(instance=instance, initial={
                 'after': after,
                 'page': page,
+                # 'rehost': False,
             })
+
     elif content_type == 'gallery':
         form = []
 
