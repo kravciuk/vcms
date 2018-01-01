@@ -42,6 +42,8 @@ class PageContentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PageContentForm, self).__init__(*args, **kwargs)
+        self.fields['date_published'].widget.attrs['class'] = 'plain_datebox'
+
 
     class Meta:
         model = Content

@@ -15,7 +15,7 @@ from .forms import PageContentForm
 from .models import Content
 from vcms.utils import id_to_hash, hash_to_id
 from vcms.task import rehost_content
-from flynsarmy_paginator.paginator import FlynsarmyPaginator
+from vu.paginator import FlynsarmyPaginator
 # from jfu.http import upload_receive, UploadResponse, JFUResponse
 
 import logging as log

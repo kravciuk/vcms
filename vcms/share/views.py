@@ -13,13 +13,13 @@ from django.core.paginator import EmptyPage, PageNotAnInteger
 from django.utils.text import slugify
 from imagekit import ImageSpec
 from pilkit.processors import ResizeToFit
-from sendfile import sendfile
+from vu.sendfile.core import sendfile
 
 from .forms import AddSnippetForm
 from .models import Share, SHARE_PROTECTED_DIR, SHARE_UPLOADED_DIR
 from vcms.utils import hash_to_id, unique_file_name, encrypt, decrypt
 
-from flynsarmy_paginator.paginator import FlynsarmyPaginator
+from vu.paginator import FlynsarmyPaginator
 
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name

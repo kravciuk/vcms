@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags widget_tweaks sekizai_tags staticfiles i18n  %}
+{% load crispy_forms_tags sekizai_tags staticfiles i18n  %}
 
 {% block title %}{% trans 'Create new record' %}{% endblock %}
 
@@ -164,7 +164,7 @@ ul.as-selections li.as-original input {  height: auto !important;  }
                 <div class="col_1_4 ng">
                     <div class="fieldWrapper">
                         {{ form.hidden.errors }}
-                        Hidden: {% render_field form.hidden %}
+                        Hidden: {{ form.hidden }}
                     </div>
                 </div>
                 <div class="col_1_4">
@@ -184,7 +184,7 @@ ul.as-selections li.as-original input {  height: auto !important;  }
                 <div class="col_1_4">
                     <div class="fieldWrapper">
                         {{ form.time_delete.errors }}
-                        Delete on: {% render_field form.time_delete %}
+                        Delete on: {{ form.time_delete }}
                     </div>
                 </div>
             </div>

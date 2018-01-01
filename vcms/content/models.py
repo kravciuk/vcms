@@ -12,7 +12,6 @@ from django.utils import timezone
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 from taggit.models import Tag, TaggedItem
-from unidecode import unidecode
 from taggit_autosuggest.managers import TaggableManager
 from treebeard.mp_tree import MP_Node
 from vcms.utils import id_to_hash
@@ -30,7 +29,7 @@ class PostTag(Tag):
         proxy = True
 
     def slugify(self, tag, i=None):
-            slug = slugify(unidecode(tag)).lower()
+            slug = slugify(tag.lower())
             if i is not None:
                 slug += '-%d' % i
             return slug

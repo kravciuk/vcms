@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags widget_tweaks staticfiles sekizai_tags i18n vcms_tags  %}
+{% load crispy_forms_tags staticfiles sekizai_tags i18n vcms_tags  %}
 
 {% block title %}Создание новой записи{% endblock %}
 
@@ -90,16 +90,16 @@ ul.as-selections li.as-original input {  height: auto !important;  }
             <diw class="row">
                 <div class="col_1_2">
                     <div class="fieldWrapper">
-                        {% render_field form.enabled %} is enabled
-                        {% render_field form.hidden %} hide from menu
-                        {% render_field form.comments %} allow comments
+                        {{ form.enabled }} is enabled
+                        {{ form.hidden }} hide from menu
+                        {{ form.comments }} allow comments
                     </div>
                 </div>
                 <div class="col_1_2">
                     <div class="fieldWrapper">
                         {{ form.date_published.errors }}
-                        Published: {% render_field form.date_published class="plain_datebox" %}
-                            {% render_field form.rehost %} rehost content
+                        Published: {{ form.date_published }}
+                            {{ form.rehost }} rehost content
                     </div>
                 </div>
             </diw>
@@ -116,9 +116,6 @@ ul.as-selections li.as-original input {  height: auto !important;  }
     {{ form.media.js }}
     <script type="text/javascript" src="/static/admin/js/urlify.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
-{#    <script type="text/javascript" src="/static/ckeditor/ckeditor/ckeditor.js"></script>#}
-{#    <script type="text/javascript" src="/static/ckeditor/ckeditor-init.js"></script>#}
-{#    <script type="text/javascript" src="/static/jquery-autosuggest/js/jquery.autoSuggest.minified.js"></script>#}
     <script type="text/javascript">
     document.getElementById("id_title").onkeyup = function() {
         var e = document.getElementById("id_slug");

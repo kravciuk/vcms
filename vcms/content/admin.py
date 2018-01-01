@@ -3,7 +3,6 @@ __author__ = 'Vadim Kravciuk, vadim@kravciuk.com'
 
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
-from image_cropping import ImageCroppingMixin
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 from vcms.content.models import Category, Content, Snippet
@@ -19,7 +18,7 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
-class ContentAdmin(ImageCroppingMixin, TreeAdmin):
+class ContentAdmin(TreeAdmin):
     form = movenodeform_factory(Content)
     list_display = ('title', 'enabled', 'hidden')
     list_filter = ['enabled', 'hidden', 'category', 'type']

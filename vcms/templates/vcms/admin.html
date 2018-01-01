@@ -1,7 +1,6 @@
 {% load staticfiles %}
 {% if menu %}
     <link rel="stylesheet" type="text/css" href="{% static 'vcms/iconmenu.css' %}" />
-    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 <script type="text/javascript">
 
 window.jQuery || document.write('<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"><\/script>')
@@ -9,9 +8,9 @@ window.jQuery || document.write('<script src="//ajax.googleapis.com/ajax/libs/jq
     <script>ddiconmenu.docinit({menuid:'myiconmenu', easing:"easeInOutCirc", dur:500 })</script>
 
 <ul id="myiconmenu" class="iconmenu">
-    {% if current_page_hash %}<li><a class="icon-edit" href="{% url 'content_edit' 'page' %}?page={{ current_page_hash }}"></a></li>{% endif %}
-    <li><a class="icon-plus" href="#" rel="csslibrary"></a></li>
-    <li><a class="icon-gear" href="{% url 'admin:index' %}" target="_blank"></a></li>
+    {% if current_page_hash %}<li><a href="{% url 'content_edit' 'page' %}?page={{ current_page_hash }}">E</a></li>{% endif %}
+    <li><a href="#" rel="csslibrary">+</a></li>
+    <li><a href="{% url 'admin:index' %}" target="_blank">*</a></li>
 </ul>
 
 <div id="csslibrary" class="iconsubmenu dropdownmenu">
