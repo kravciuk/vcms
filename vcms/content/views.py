@@ -100,7 +100,7 @@ def add_or_edit(request, content_type=None, parent=None):
     elif content_type == 'gallery':
         form = []
 
-    return render(request, 'content/add_or_edit_%s.html' % content_type, {
+    return render(request, 'content/page_form.html', {
         'form': form,
         'instance': instance,
     })

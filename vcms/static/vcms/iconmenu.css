@@ -11,8 +11,8 @@ ul.iconmenu{
 font-size: 1em;
 list-style: none;
 position: fixed;
-left: 0;
-top: 150px; /* offset from top of page to display icon menu */
+left: 5px;
+bottom: 150px; /* offset from top of page to display icon menu */
 margin: 0;
 padding: 0;
 width: 2em;

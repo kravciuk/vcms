@@ -18,6 +18,11 @@ register = template.Library()
 import logging as log
 
 
+@register.filter(name='addclass')
+def addclass(field, my_class):
+   return field.as_widget(attrs={"class":my_class})
+
+
 @register.inclusion_tag('vcms/comments/form.html', takes_context=True)
 def vcms_comment(context, obj):
     moderate_permission = False

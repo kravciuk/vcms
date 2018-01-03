@@ -13,7 +13,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger
 from django.utils.text import slugify
 from imagekit import ImageSpec
 from pilkit.processors import ResizeToFit
-from vu.sendfile.core import sendfile
+from vu.sendfile import sendfile
 
 from .forms import AddSnippetForm
 from .models import Share, SHARE_PROTECTED_DIR, SHARE_UPLOADED_DIR

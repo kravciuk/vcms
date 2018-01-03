@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load staticfiles sekizai_tags embed_video_tags %}
+{% load staticfiles sekizai_tags embed_video_tags vcms_tags %}
 
 {% block title %}{{ snippet.title }}{% endblock %}
 
@@ -44,7 +44,7 @@
 		</div>
 	{% elif snippet.file and snippet.type == 'image' %}
 		<div class="row">
-			<div class="col-md-12"><img src="/media/{{ snippet.file }}" style="max-width: 600px;"></div>
+            <div class="col-md-12"><a href="/media/{{ snippet.file }}"><img src="/media/{{ snippet.file }}" style="max-width: 600px;"></a> </div>
         </div>
         <div class="row">
 			<div class="col-md-12">

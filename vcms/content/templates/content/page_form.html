@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags staticfiles sekizai_tags i18n vcms_tags  %}
+
+{% block title %}Создание новой записи{% endblock %}
+
+{% block content %}
+
+    {{ form.media.css }}
+
+    <style type="text/css">
+    ul.as-selections li.as-original input {  height: auto !important;  }
+    #id_tags { display: none; !important;  }
+    </style>
+
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+    <h2>{% if not form.page.value %}Добавить новую запись{% else %}Редактировать запись "<a href="{% url 'content_page' instance.url %}">{{ instance.title }}</a>"{% endif %}</h2>
+
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form action="" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{  form.after }}
+        {{ form.page }}
+        {{ form.non_field_errors }}
+
+            <div class="form-group">
+                <fieldset>
+                    {{ form.title.errors }}
+                    <label class="control-label" for="{{ form.title.id_for_label }}">Title:</label>
+                    {{ form.title|addclass:'form-control col-9' }}
+                </fieldset>
+            </div>
+
+            <div class="form-group">
+                <fieldset>
+                    {{ form.title.errors }}
+                    <label class="control-label" for="{{ form.slug.id_for_label }}">Slug:</label>
+                    {{ form.slug|addclass:'form-control col-9' }}
+                </fieldset>
+            </div>
+
+            <div class="form-group">
+                <fieldset>
+                    {{ form.content.errors }}
+                    <label class="control-label" for="{{ form.content.id_for_label }}">Content:</label><br/>
+                    {{ form.content }}
+                </fieldset>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <fieldset>
+                        {{ form.tags.errors }}
+                        <label class="control-label" for="{{ form.tags.id_for_label }}">Tags:</label>
+                        {{ form.tags }}
+                    </fieldset>
+                </div>
+                <div class="col">
+                    <fieldset>
+                        {{ form.template.errors }}
+                        <label class="control-label" for="{{ form.template.id_for_label }}">Template:</label>
+                        {{ form.template|addclass:'form-control col-9' }}
+                    </fieldset>
+                </div>
+                <div class="col">
+                    <fieldset>
+                        {{ form.category.errors }}
+                        <label class="control-label" for="{{ form.category.id_for_label }}">Category:</label>
+                        {{ form.category|addclass:'form-control' }}
+                    </fieldset>
+                </div>
+            </div>
+
+            <fieldset>
+                {{ form.meta_keywords.errors }}
+                <label class="control-label" for="{{ form.meta_keywords.id_for_label }}">Keywords:</label>
+                {{ form.meta_keywords|addclass:'form-control col-9' }}
+            </fieldset>
+
+            <fieldset>
+                {{ form.meta_description.errors }}
+                <label class="control-label" for="{{ form.meta_description.id_for_label }}">Description:</label>
+                {{ form.meta_description|addclass:'form-control col-9' }}
+            </fieldset>
+
+            <diw class="row">
+                <div class="col">
+                    <fieldset>
+                        {{ form.enabled }} is enabled <br />
+                        {{ form.hidden }} hide from menu <br />
+                        {{ form.comments }} allow comments <br />
+                    </fieldset>
+                </div>
+                <div class="col">
+                    {{ form.rehost }} rehost content <br />
+                </div>
+                <div class="col">
+                    <fieldset>
+                        {{ form.date_published.errors }}
+                        <label class="control-label" for="{{ form.meta_description.id_for_label }}">Published:</label>
+                        {{ form.date_published|addclass:'form-control col-3' }}
+                    </fieldset>
+
+                </div>
+            </diw>
+
+            <div class="row">
+                <div class="col">
+                    <input type="submit" name="save_button" value="{% trans "Save" %}" class="btn btn-primary">
+                    {% if form.page.value %} <input type="submit" name="delete_button" value="{% trans "Delete" %}" class="btn btn-danger"> {% endif %}
+                </div>
+            </div>
+
+
+    </form>
+
+        </div>
+    </div>
+
+    {{ form.media.js }}
+
+    <script type="text/javascript" src="/static/admin/js/urlify.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+    <script type="text/javascript">
+    document.getElementById("id_title").onkeyup = function() {
+        var e = document.getElementById("id_slug");
+        if (!e._changed) { e.value = URLify(document.getElementById("id_title").value, 50); }
+    }
+
+    jQuery(document).ready(function($){
+        $('.django-select2').not('django-select2-heavy').select2();
+        $('.django-select2.django-select2-heavy').each(function () {
+            var field_id = $(this).data('field_id');
+            $(this).select2({
+                ajax: {
+                    data: function (params) {
+                        return {
+                            term: params.term,
+                            page: params.page,
+                            field_id: field_id
+                        }
+                    },
+                    processResults: function (data, page) {
+                        return {
+                            results: data.results,
+                            pagination: {
+                                more: data.more
+                            }
+                      }
+                    }
+                }
+            });
+        });
+    });
+
+    </script>
+
+
+{% endblock %}
+
+
