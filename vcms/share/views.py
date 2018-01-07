@@ -144,6 +144,7 @@ def add_or_edit(request, short_id=''):
                         log.error("Error creating thumbnail file: %s" % e)
 
             instance.save()
+            form.save_m2m()
             return redirect('share_snippet', short_id=instance.short_id)
 
     return render(request, 'share/form.html', {

@@ -13,7 +13,7 @@ from django.dispatch import receiver
 from taggit_autosuggest.managers import TaggableManager
 from markdown import markdown
 from hashids import Hashids
-from datetime import datetime
+from embed_video.backends import detect_backend
 
 import logging
 log = logging.getLogger(__name__)
@@ -189,7 +189,8 @@ class Share(models.Model):
     @property
     def video_link(self):
         if self.url is not None:
-            match = re.search('youtu|soundcloud|vimeo', self.url)
+            match = detect_backend(self.url)
+            # match = re.search('youtu|soundcloud|vimeo', self.url)
             if match:
                 return True
         return False
