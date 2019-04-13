@@ -29,7 +29,6 @@ class AddSnippetForm(forms.ModelForm):
     )
 
     type = forms.ChoiceField(choices=PYGMENTS_CHOISE)
-    # time_delete = forms.DateField(widget=AdminDateWidget())
 
     def __init__(self, *args, **kwargs):
         super(AddSnippetForm, self).__init__(*args, **kwargs)
@@ -40,9 +39,9 @@ class AddSnippetForm(forms.ModelForm):
 
     class Media:
         css = {
-            'all': ('datepicker/css/datepicker.css',)
+            'all': ('datepicker/datepicker.css',)
         }
-        js = ('datepicker/js/datepicker.min.js',)
+        js = ('datepicker/datepicker.min.js',)
 
     def clean(self):
         cleaned_data = super(AddSnippetForm, self).clean()

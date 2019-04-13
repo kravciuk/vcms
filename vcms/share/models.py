@@ -5,7 +5,7 @@ import os
 import re
 from django.conf import settings
 from django.db import models
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
@@ -59,7 +59,7 @@ class Share(models.Model):
         ('xml', 'XML'),
     )
 
-    user = models.ForeignKey(User, default=1)
+    user = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
     type = models.CharField(max_length=10, verbose_name=_(u'Type'), choices=PYGMENTS_CHOISE, default='text', db_index=True)
     title = models.CharField(_(u'Title'),max_length=255, blank=True, null=True)
     slug = models.SlugField(_(u'Slug'),max_length=255, blank=True, null=True, db_index=True)
@@ -188,11 +188,13 @@ class Share(models.Model):
 
     @property
     def video_link(self):
-        if self.url is not None:
-            match = detect_backend(self.url)
-            # match = re.search('youtu|soundcloud|vimeo', self.url)
-            if match:
-                return True
+        if self.url:
+            try:
+                match = detect_backend(self.url)
+                if match:
+                    return True
+            except:
+                pass
         return False
 
     def __str__(self):
@@ -200,8 +202,8 @@ class Share(models.Model):
 
 
 class File(models.Model):
-    user = models.ForeignKey(User, default=1)
-    share = models.ForeignKey(Share, blank=True, null=True, related_name='file_share')
+    user = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
+    share = models.ForeignKey(Share, blank=True, null=True, related_name='file_share', on_delete=models.CASCADE)
     file = models.FileField(_(u'File'))
     name = models.CharField(_(u'Name'), max_length=255)
     mime = models.CharField(max_length=128, blank=True, null=True)

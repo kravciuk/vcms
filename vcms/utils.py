@@ -5,7 +5,8 @@ import os
 from hashids import Hashids
 from django.conf import settings
 import base64
-from Crypto.Cipher import XOR
+# from Crypto.Cipher import XOR
+from Crypto.Util import strxor as XOR
 
 
 def id_to_hash(short_id, salt=None, length=4):

@@ -5,6 +5,18 @@
 
 {% block content %}
 
+{% addtoblock 'js' %}
+    <script>
+    var django = django || {};
+    django.jQuery = jQuery.noConflict(false);
+
+    jQuery(document).ready(function ($) {
+        $('#id_date_published').datepicker({format: 'yyyy-mm-dd'});
+    });
+
+    </script>
+{% endaddtoblock %}
+
     {{ form.media.css }}
 
     <style type="text/css">

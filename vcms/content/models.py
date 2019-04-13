@@ -74,7 +74,7 @@ class Content(MP_Node):
         (TYPE_GALLERY, _(u'Gallery')),
     )
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(_(u'Title'), max_length=255, default='')
     url = models.CharField(_(u'Path'), max_length=255, default='', editable=False, db_index=True)
     slug = models.SlugField(verbose_name=_(u'Slug'), max_length=255, db_index=True)

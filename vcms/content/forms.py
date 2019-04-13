@@ -44,10 +44,15 @@ class PageContentForm(forms.ModelForm):
         super(PageContentForm, self).__init__(*args, **kwargs)
         self.fields['date_published'].widget.attrs['class'] = 'plain_datebox'
 
-
     class Meta:
         model = Content
         exclude = ['show_count', 'view_count', 'custom', 'user', 'rating', 'type', 'id']
+
+    class Media:
+        css = {
+            'all': ('datepicker/datepicker.css',)
+        }
+        js = ('datepicker/datepicker.min.js',)
 
     def full_clean(self):
         super(PageContentForm, self).full_clean()

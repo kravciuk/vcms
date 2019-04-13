@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from django.core.files.storage import default_storage
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import EmptyPage, PageNotAnInteger
@@ -18,8 +18,8 @@ from vcms.task import rehost_content
 from vu.paginator import FlynsarmyPaginator
 # from jfu.http import upload_receive, UploadResponse, JFUResponse
 
-import logging as log
-# log = logging.getLogger(__name__)
+import logging
+log = logging.getLogger(__name__)
 
 
 def index(request, owner=False, content_type="page"):

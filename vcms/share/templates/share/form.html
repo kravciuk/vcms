@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags sekizai_tags staticfiles i18n  %}
+{% load sekizai_tags staticfiles i18n widget_tweaks  %}
 
 {% block title %}{% trans 'Create new record' %}{% endblock %}
 
@@ -7,7 +7,6 @@
 
 {% addtoblock 'css' %}
 
-{#  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">#}
 <style>
 .tabs {
 	min-width: 320px;
@@ -100,6 +99,10 @@
 {% endaddtoblock %}
     {% addtoblock 'js' %}
 <script>
+
+var django = django || {};
+django.jQuery = jQuery.noConflict(false);
+
     jQuery(document).ready(function ($) {
         $('#id_time_delete').datepicker({format: 'yyyy-mm-dd'});
     });
@@ -118,86 +121,87 @@ ul.as-selections li.as-original input {  height: auto !important;  }
         <div class="col-md-12">
             {{ form.non_field_errors }}
 
-            <div class="fieldWrapper">
+            <div class="form-group">
                 {{ form.title.errors }}
                 <label for="{{ form.title.id_for_label }}">Title:</label>
-                {{ form.title }}
+                {% render_field form.title class='form-control' %}
             </div>
 
-            <div class="fieldWrapper">
+            <div class="form-group">
                 {{ form.description.errors }}
                 <label for="{{ form.description.id_for_label }}">Description:</label>
-                {{ form.description }}
+                {% render_field form.description class='form-control' rows=5 %}
             </div>
 
             <div class="tabs">
                 <input id="tab1" type="radio" name="tabs" checked>
-                <label for="tab1" title="Wordpress">Text content</label>
+                <label for="tab1" title="Wordpress">{% trans 'Text content' %}</label>
                 <input id="tab2" type="radio" name="tabs">
-                <label for="tab2" title="Windows">Upload content</label>
+                <label for="tab2" title="Windows">{% trans 'Upload content' %}</label>
                 <input id="tab3" type="radio" name="tabs">
-                <label for="tab3" title="HTML5">URL redirect</label>
+                <label for="tab3" title="HTML5">{% trans 'URL redirect' %}</label>
                 <section id="content-tab1">
-                    <div class="fieldWrapper">
+                    <div class="form-group">
                         {{ form.content.errors }}
                         <label for="{{ form.content.id_for_label }}">Content:</label>
-                        {{ form.content }}
+                        {% render_field form.content class='form-control' %}
                     </div>
                 </section>
                 <section id="content-tab2">
-                    <div class="fieldWrapper">
+                    <div class="custom-file">
                         {{ form.file.errors }}
-                        <label for="{{ form.file.id_for_label }}">File:</label>
-                        {{ form.file }}
+                        <label class="custom-file-label" for="{{ form.file.id_for_label }}">File:</label>
+                        {% render_field form.file class='custom-file-input' %}
                     </div>
                 </section>
                 <section id="content-tab3">
-                    <div class="fieldWrapper">
+                    <div class="form-group">
                         {{ form.url.errors }}
                         <label for="{{ form.url.id_for_label }}">URL:</label>
-                        {{ form.url }}
+                        {% render_field form.url class='form-control' %}
                     </div>
                 </section>
             </div>
 
-            <div class="row">
-                <div class="col_1_4 ng">
-                    <div class="fieldWrapper">
+            <div class="form-row">
+                <div class="col-md-2 mb-2">
+                    <div class="form-check">
                         {{ form.hidden.errors }}
-                        Hidden: {{ form.hidden }}
+                        {% render_field form.hidden class="form-check-input" %}
+                        <label class="form-check-label">Hidden:</label>
                     </div>
                 </div>
-                <div class="col_1_4">
-                    <div class="fieldWrapper">
+                <div class="col-md-3 mb-2">
+                    <div class="form-group">
                         {{ form.tags.errors }}
                         <label for="{{ form.tags.id_for_label }}">Tags:</label>
-                        {{ form.tags }}
+                        {% render_field form.tags class='form-control' %}
                     </div>
                 </div>
-                <div class="col_1_4">
-                    <div class="fieldWrapper">
+                <div class="col-md-2 mb-2">
+                    <div class="form-group">
                         {{ form.type.errors }}
                         <label for="{{ form.type.id_for_label }}">Type:</label>
-                        {{ form.type }}
+                        {% render_field form.type class='form-control' %}
                     </div>
                 </div>
-                <div class="col_1_4">
-                    <div class="fieldWrapper">
+                <div class="col-md-1 mb-1">
+                    <div class="form-group">
                         {{ form.time_delete.errors }}
-                        Delete on: {{ form.time_delete }}
+                        <label>Delete on:</label>
+                        {% render_field form.time_delete class='form-control' %}
                     </div>
                 </div>
             </div>
 
-            <div class="row">
-                <input type="submit" name="save" class="button_green" value="{% trans 'Submit' %}">
-                {% if instance.id %}
-                <input type="submit" name="delete" class="button_red" value="Удалить">
-                {% endif %}
-            </div>
+             <button class="btn btn-primary" name="save" type="submit">{% trans 'Submit' %}</button>
+            {% if instance.id %}
+                <button class="btn btn-danger" name="delete" type="submit">{% trans 'Delete' %}</button>
+            {% endif %}
         </div>
     </div>
     </form>
 {{ form.media.js }}
+
 {% endblock %}
 

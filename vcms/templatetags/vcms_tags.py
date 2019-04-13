@@ -88,7 +88,7 @@ def vcms_admin(context):
         return {'menu': False}
 
 
-@register.assignment_tag
+@register.simple_tag
 def vcms_page(*args, **kwargs):
     url = kwargs.get('url')
 
@@ -99,7 +99,7 @@ def vcms_page(*args, **kwargs):
         return None
 
 
-@register.assignment_tag
+@register.simple_tag
 def vcms_pages(*args, **kwargs):
     category = kwargs.get('category')
     parent = kwargs.get('parent')
@@ -120,7 +120,7 @@ def vcms_pages(*args, **kwargs):
     return rs[limit_from:limit]
 
 
-@register.assignment_tag()
+@register.simple_tag()
 def last_snippets(snippet_type='source', limit=20, show_hidden=False):
     res = Share.objects.filter(type=snippet_type, password='', disabled=False)
     if show_hidden is False:
