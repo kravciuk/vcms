@@ -89,6 +89,7 @@ class Content(MP_Node):
     date_published = models.DateField(_(u'Date published'), default=timezone.now, db_index=True)
     content = RichTextUploadingField(_(u'Content'), blank=True)
     comments = models.BooleanField(_(u'Allow comments'), default=False)
+    language = models.CharField(_(u'Language'), choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE, max_length=5)
 
     tags = TaggableManager(_(u'Tags'), through=PostTaggedItem, blank=True)
     rating = models.IntegerField(_(u'Rating'), default=0)

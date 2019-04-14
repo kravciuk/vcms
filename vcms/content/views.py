@@ -74,12 +74,16 @@ def add_or_edit(request, content_type=None, parent=None):
                 else:
                     if form.cleaned_data.get('after'):
                         node = get_object_or_404(Content, id=hash_to_id(after, length=Content.HASH_LENGTH), user=request.user)
-                        new_node = node.add_child(user=request.user)
+                        if node.slug == 'index':
+                            new_node = Content.add_root(user=request.user)
+                        else:
+                            new_node = node.add_child(user=request.user)
                     else:
                         new_node = Content.add_root(user=request.user)
                     form = PageContentForm(request.POST, instance=new_node)
                     instance = form.save(commit=False)
                     instance.user = request.user
+                    instance.language = request.LANGUAGE_CODE
                     instance.save()
                     form.save_m2m()
 
@@ -106,8 +110,8 @@ def add_or_edit(request, content_type=None, parent=None):
     })
 
 
-def content_view(request, path, *args, **kwargs):
-    instance = get_object_or_404(Content, enabled=True, url=path)
+def content_view(request, path='index', *args, **kwargs):
+    instance = get_object_or_404(Content, enabled=True, url=path, language=request.LANGUAGE_CODE)
     return render(request, "content/%s.html" % instance.template, {
         'content': instance,
     })
