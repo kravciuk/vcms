@@ -93,7 +93,7 @@ class Share(models.Model):
 
     def save(self, *args, **kwargs):
         if self.description is not None:
-            self.description_html = markdown(self.description, ['codehilite'])
+            self.description_html = markdown(self.description, extensions=['codehilite'])
 
         if not self.pk:
             expl = self.title.split('/')

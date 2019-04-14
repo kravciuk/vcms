@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags staticfiles sekizai_tags i18n vcms_tags  %}
+{% load staticfiles sekizai_tags i18n vcms_tags widget_tweaks  %}
 
-{% block title %}Создание новой записи{% endblock %}
+{% block title %}{% trans 'Create or edit page' %}{% endblock %}
 
 {% block content %}
 
@@ -25,9 +25,9 @@
     </style>
 
     <div class="row">
-        <div class="col-1"></div>
-        <div class="col-10">
-    <h2>{% if not form.page.value %}Добавить новую запись{% else %}Редактировать запись "<a href="{% url 'content_page' instance.url %}">{{ instance.title }}</a>"{% endif %}</h2>
+        <div class="col-md-1"></div>
+        <div class="col-md-11">
+    <h2>{% if not form.page.value %}{% trans 'Create new page' %}{% else %}{% trans 'Edit page' %} "<a href="{% url 'content_page' instance.url %}">{{ instance.title }}</a>"{% endif %}</h2>
 
 
     {% if messages %}
@@ -48,7 +48,7 @@
                 <fieldset>
                     {{ form.title.errors }}
                     <label class="control-label" for="{{ form.title.id_for_label }}">Title:</label>
-                    {{ form.title|addclass:'form-control col-9' }}
+                    {{ form.title|addclass:'form-control col-12' }}
                 </fieldset>
             </div>
 
@@ -68,26 +68,26 @@
                 </fieldset>
             </div>
 
-            <div class="row">
-                <div class="col">
+            <div class="form-row">
+                <div class="col-md-2 mb-2">
                     <fieldset>
                         {{ form.tags.errors }}
                         <label class="control-label" for="{{ form.tags.id_for_label }}">Tags:</label>
-                        {{ form.tags }}
+                        {% render_field form.tags class='form-control' %}
                     </fieldset>
                 </div>
-                <div class="col">
+                <div class="col-md-3 mb-2">
                     <fieldset>
                         {{ form.template.errors }}
                         <label class="control-label" for="{{ form.template.id_for_label }}">Template:</label>
-                        {{ form.template|addclass:'form-control col-9' }}
+                        {% render_field form.template class='form-control' %}
                     </fieldset>
                 </div>
-                <div class="col">
+                <div class="col-md-4 mb-2">
                     <fieldset>
                         {{ form.category.errors }}
                         <label class="control-label" for="{{ form.category.id_for_label }}">Category:</label>
-                        {{ form.category|addclass:'form-control' }}
+                        {% render_field form.category class='form-control' %}
                     </fieldset>
                 </div>
             </div>
@@ -127,7 +127,7 @@
 
             <div class="row">
                 <div class="col">
-                    <input type="submit" name="save_button" value="{% trans "Save" %}" class="btn btn-primary">
+                    <input type="submit" name="save_button" value="{% trans "Save page" %}" class="btn btn-primary">
                     {% if form.page.value %} <input type="submit" name="delete_button" value="{% trans "Delete" %}" class="btn btn-danger"> {% endif %}
                 </div>
             </div>

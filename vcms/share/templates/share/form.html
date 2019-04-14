@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load sekizai_tags staticfiles i18n widget_tweaks  %}
 
-{% block title %}{% trans 'Create new record' %}{% endblock %}
+{% block title %}{% trans 'Create new snippet' %}{% endblock %}
 
 {% block content %}
 
@@ -113,12 +113,12 @@ django.jQuery = jQuery.noConflict(false);
 ul.as-selections li.as-original input {  height: auto !important;  }
 #id_tags { display: none; !important;  }
 </style>
-	<h2>{% trans 'Create new record' %}</h2>
-
     <form action="" method="post" accept-charset="utf-8" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-1"></div>
+        <div class="col-md-11">
+        <h2>{% trans 'Create new record' %}</h2>
             {{ form.non_field_errors }}
 
             <div class="form-group">
@@ -194,7 +194,7 @@ ul.as-selections li.as-original input {  height: auto !important;  }
                 </div>
             </div>
 
-             <button class="btn btn-primary" name="save" type="submit">{% trans 'Submit' %}</button>
+             <button class="btn btn-primary" name="save" type="submit">{% trans 'Save snippet' %}</button>
             {% if instance.id %}
                 <button class="btn btn-danger" name="delete" type="submit">{% trans 'Delete' %}</button>
             {% endif %}
