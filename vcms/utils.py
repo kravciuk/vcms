@@ -7,6 +7,8 @@ from django.conf import settings
 import base64
 # from Crypto.Cipher import XOR
 from Crypto.Util import strxor as XOR
+from Crypto.Util.Padding import pad
+from Crypto.Cipher import DES, AES
 
 
 def id_to_hash(short_id, salt=None, length=4):
@@ -56,15 +58,16 @@ def unique_slug(instance, slug_field, slug, counter=0, query=None):
 
 
 def encrypt(key, plaintext):
-    cipher = XOR.new(key)
-    string = base64.b64encode(cipher.encrypt(plaintext)).decode()
+    cipher = AES.new(str.encode(key[:16]), AES.MODE_CBC)
+    padded_data = pad(plaintext.encode(), cipher.block_size)
+    string = base64.b64encode(cipher.encrypt(padded_data)).decode()
     pad_count = string.count('=')
     return "%s%s" % (string.replace('=', ''), pad_count)
 
 
 def decrypt(key, ciphertext):
     try:
-        cipher = XOR.new(key)
+        cipher = AES.new(str.encode(key[:16]), AES.MODE_CBC)
         i = int(ciphertext[-1])
         ciphertext = "%s%s" % (ciphertext[:-1], '='*i)
         return cipher.decrypt(base64.b64decode(ciphertext))

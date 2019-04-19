@@ -39,7 +39,7 @@ def vcms_comment(context, obj):
         'moderate_permission': moderate_permission,
         'records': rs,
         'obj': obj,
-        'parent': encrypt(settings.SECRET_KEY[:6], "%s:%s" % (d.pk, obj.pk)),
+        'parent': encrypt(settings.SECRET_KEY, "%s:%s" % (d.pk, obj.pk)),
         'request': context['request'],
     }
 
