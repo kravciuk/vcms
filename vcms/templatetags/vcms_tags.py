@@ -103,6 +103,7 @@ def vcms_page(*args, **kwargs):
 def vcms_pages(*args, **kwargs):
     category = kwargs.get('category')
     parent = kwargs.get('parent')
+    language = kwargs.get('lang')
     limit = kwargs.get('limit', 10)
     limit_from = kwargs.get('limit_from', 0)
     rs = Content.objects.filter(enabled=True)
@@ -116,7 +117,11 @@ def vcms_pages(*args, **kwargs):
     if category:
         rs = rs.filter(category__slug=category)
 
+    if language:
+        rs = rs.filter(language=language)
+
     rs = rs.filter(hidden=False).order_by('-date_published', '-id')
+
     return rs[limit_from:limit]
 
 

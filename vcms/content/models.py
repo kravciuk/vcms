@@ -2,6 +2,7 @@
 __author__ = 'Vadim Kravciuk, vadim@kravciuk.com'
 
 from datetime import datetime
+import re
 
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
@@ -9,6 +10,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
+from django.urls import reverse
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 from taggit.models import Tag, TaggedItem
@@ -118,11 +120,16 @@ class Content(MP_Node):
 
     @property
     def short_content(self):
-        return self.content.split(cutter, 1)[0]
+        result = re.findall(r"(?si)<p>(.*?)<\/p>", self.content)
+        try:
+            return result[0]
+        except Exception as e:
+            # print(re.sub('<[^<]+?>', '', self.content))
+            return ''
 
     @property
     def long_content(self):
-        return self.content.split(cutter, 1)[1]
+        return self.content
 
     def get_upload_path(self, filename):
         return 'content/%s/%s' % (datetime.now().strftime("%Y/%m"), filename)
@@ -167,6 +174,13 @@ class Content(MP_Node):
         super(Content, self).save(*args, **kwargs)
         if update_slug is True:
             self.update_url()
+
+    def reverse(self):
+        if self.language == settings.LANGUAGE_CODE:
+            prefix = ''
+        else:
+            prefix = '/%s' % self.language
+        return prefix + reverse('content_page', args=[self.url])
 
 
 class Snippet(models.Model):
