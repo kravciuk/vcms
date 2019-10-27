@@ -96,10 +96,14 @@
 	}
 }
 </style>
+    {{ form.media.css }}
 {% endaddtoblock %}
-    {% addtoblock 'js' %}
-<script>
 
+{#    {% addtoblock 'head' %}{{ form.media }}{% endaddtoblock %}#}
+
+    {% addtoblock 'js' %}
+
+<script>
 var django = django || {};
 django.jQuery = jQuery.noConflict(false);
 
@@ -107,8 +111,12 @@ django.jQuery = jQuery.noConflict(false);
         $('#id_time_delete').datepicker({format: 'yyyy-mm-dd'});
     });
 </script>
+<script type="text/javascript" src="/static/datepicker/datepicker.js"></script>
+<script type="text/javascript" src="/static/jquery-autosuggest/js/jquery.autoSuggest.minified.js"></script>
+{#        {{ form.media.js }}#}
+
     {% endaddtoblock %}
-{{ form.media.css }}
+{#{{ form.media.css }}#}
 <style type="text/css">
 ul.as-selections li.as-original input {  height: auto !important;  }
 #id_tags { display: none; !important;  }
@@ -185,7 +193,7 @@ ul.as-selections li.as-original input {  height: auto !important;  }
                         {% render_field form.type class='form-control' %}
                     </div>
                 </div>
-                <div class="col-md-1 mb-1">
+                <div class="col-md-2 mb-2">
                     <div class="form-group">
                         {{ form.time_delete.errors }}
                         <label>Delete on:</label>
@@ -196,12 +204,12 @@ ul.as-selections li.as-original input {  height: auto !important;  }
 
              <button class="btn btn-primary" name="save" type="submit">{% trans 'Save snippet' %}</button>
             {% if instance.id %}
-                <button class="btn btn-danger" name="delete" type="submit">{% trans 'Delete' %}</button>
+                <button class="btn btn-danger" name="delete" value="delete" type="submit">{% trans 'Delete' %}</button>
             {% endif %}
         </div>
     </div>
     </form>
-{{ form.media.js }}
+
 
 {% endblock %}
 

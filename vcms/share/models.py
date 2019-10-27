@@ -64,6 +64,7 @@ class Share(models.Model):
     title = models.CharField(_(u'Title'),max_length=255, blank=True, null=True)
     slug = models.SlugField(_(u'Slug'),max_length=255, blank=True, null=True, db_index=True)
     file = models.FileField(max_length=255, blank=True, null=True, upload_to=SHARE_UPLOADED_DIR)
+    original_file_name = models.CharField(_(u'Original file name'), blank=True, null=True, max_length=256)
     url = models.CharField(_(u'Url'),max_length=255, blank=True, null=True)
     tags = TaggableManager(_(u'Tags'), blank=True)
     description = models.TextField(_(u'Description'), blank=True, null=True)
@@ -222,10 +223,13 @@ class File(models.Model):
 @receiver(models.signals.pre_save, sender=Share)
 def share_on_change(sender, instance, **kwargs):
     if instance.pk:
-        obj = Share.objects.get(pk=instance.pk)
-        if not instance.file or instance.file != obj.file:
-            log.debug('Deleting old files')
-            obj.rm_files()
+        try:
+            obj = Share.objects.get(pk=instance.pk)
+            if not instance.file or instance.file != obj.file:
+                log.debug('Deleting old files')
+                obj.rm_files()
+        except Exception as e:
+            log.error(e)
 
 
 @receiver(models.signals.pre_delete, sender=Share)

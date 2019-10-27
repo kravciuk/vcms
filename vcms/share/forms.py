@@ -41,7 +41,9 @@ class AddSnippetForm(forms.ModelForm):
         css = {
             'all': ('datepicker/datepicker.css',)
         }
-        js = ('datepicker/datepicker.min.js',)
+        js = [
+            'datepicker/datepicker.js',
+        ]
 
     def clean(self):
         cleaned_data = super(AddSnippetForm, self).clean()

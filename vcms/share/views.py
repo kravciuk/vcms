@@ -101,6 +101,7 @@ def add_or_edit(request, short_id=''):
     form = AddSnippetForm(instance=instance)
 
     if request.method == 'POST':
+        print(request.POST)
         if request.POST.get('delete') and instance is not None:
             instance.delete()
             return redirect('share_personal')
