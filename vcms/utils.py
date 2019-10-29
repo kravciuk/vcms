@@ -2,13 +2,10 @@
 __author__ = 'Vadim Kravciuk, vadim@kravciuk.com'
 
 import os
+import base64
 from hashids import Hashids
 from django.conf import settings
-import base64
-# from Crypto.Cipher import XOR
-from Crypto.Util import strxor as XOR
-from Crypto.Util.Padding import pad
-from Crypto.Cipher import DES, AES
+from vu.aes import AESCipher
 
 
 def id_to_hash(short_id, salt=None, length=4):
@@ -58,18 +55,18 @@ def unique_slug(instance, slug_field, slug, counter=0, query=None):
 
 
 def encrypt(key, plaintext):
-    cipher = AES.new(str.encode(key[:16]), AES.MODE_CBC)
-    padded_data = pad(plaintext.encode(), cipher.block_size)
-    string = base64.b64encode(cipher.encrypt(padded_data)).decode()
-    pad_count = string.count('=')
-    return "%s%s" % (string.replace('=', ''), pad_count)
+    aes = AESCipher(settings.SECRET_KEY[:16])
+    x = aes.encrypt(plaintext).decode('utf-8')
+    pad_count = x.count('=')
+    return "%s%s" % (x.replace('=', ''), pad_count)
 
 
 def decrypt(key, ciphertext):
     try:
-        cipher = AES.new(str.encode(key[:16]), AES.MODE_CBC)
+        aes = AESCipher(settings.SECRET_KEY[:16])
         i = int(ciphertext[-1])
         ciphertext = "%s%s" % (ciphertext[:-1], '='*i)
-        return cipher.decrypt(base64.b64decode(ciphertext))
+        return aes.decrypt(ciphertext)
     except Exception as e:
-        return None
+        return e
+

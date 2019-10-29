@@ -51,7 +51,7 @@ def download_file(request, short_id, enc_key):
     expiration_time = 0
     allowed_ip = '127.0.0.1'
     try:
-        dec_string = decrypt(settings.SECRET_KEY[0:5], enc_key).decode().split(' ')
+        dec_string = decrypt(settings.SECRET_KEY, enc_key).split(' ')
         expiration_time = dec_string[0]
         allowed_ip = dec_string[1]
 
@@ -62,7 +62,8 @@ def download_file(request, short_id, enc_key):
         if allowed_ip != request.META['REMOTE_ADDR']:
             allow_download = False
             log.error("%s for object %s download - IP failed, accepted %s." % (request.META['REMOTE_ADDR'], short_id, allowed_ip))
-    except:
+    except Exception as e:
+        log.debug(e, exc_info=True)
         allow_download = False
         log.error("%s for object %s download - failed decode string." % (request.META['REMOTE_ADDR'], short_id))
 
