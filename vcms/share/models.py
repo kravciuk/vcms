@@ -72,6 +72,7 @@ class Share(models.Model):
     password = models.CharField(max_length=64, blank=True, db_index=True)
     disabled = models.BooleanField(default=False, db_index=True)
     hidden = models.BooleanField(default=False, db_index=True)
+    personal = models.BooleanField(_(u'Personal'), default=False)
 
     views = models.IntegerField(default=0, editable=False)
     file_name = models.CharField(max_length=128, blank=True, null=True)

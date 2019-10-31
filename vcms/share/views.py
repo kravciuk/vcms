@@ -8,7 +8,7 @@ from time import time
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponsePermanentRedirect, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponsePermanentRedirect, HttpResponseNotFound, HttpResponseForbidden
 from django.core.paginator import EmptyPage, PageNotAnInteger
 from django.utils.text import slugify
 from imagekit import ImageSpec
@@ -48,8 +48,6 @@ def download_file(request, short_id, enc_key):
     content = get_object_or_404(Share, slug=short_id, disabled=False)
 
     allow_download = True
-    expiration_time = 0
-    allowed_ip = '127.0.0.1'
     try:
         dec_string = decrypt(settings.SECRET_KEY, enc_key).split(' ')
         expiration_time = dec_string[0]
@@ -81,6 +79,11 @@ def download_file(request, short_id, enc_key):
 
 def view_snippet(request, short_id, content_type='html'):
     content = get_object_or_404(Share, slug=short_id, disabled=False)
+
+    # check permission
+    if content.personal is True and request.user != content.user:
+        return HttpResponseForbidden('Access denied.')
+
     if content_type == 'raw':
         replace = re.compile(r'(\r\n|\r|\r)')
         return HttpResponse(replace.sub('\n', content.content), content_type='text/plain')
@@ -195,6 +198,8 @@ def index(request, owner=False):
     share_list = Share.objects.filter(hidden=False, disabled=False)
     if owner is True:
         share_list = share_list.filter(user=request.user)
+    else:
+        share_list = share_list.filter(personal=False)
 
     paginator = FlynsarmyPaginator(share_list.order_by('-id'), 30, adjacent_pages=20)
     page = request.GET.get('page')
