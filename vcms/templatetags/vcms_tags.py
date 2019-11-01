@@ -127,7 +127,7 @@ def vcms_pages(*args, **kwargs):
 
 @register.simple_tag()
 def last_snippets(snippet_type='source', limit=20, show_hidden=False):
-    res = Share.objects.filter(type=snippet_type, password='', disabled=False)
+    res = Share.objects.filter(type=snippet_type, password='', disabled=False, personal=False)
     if show_hidden is False:
         res = res.filter(hidden=False)
     res = res.order_by('-pk')[:limit]
