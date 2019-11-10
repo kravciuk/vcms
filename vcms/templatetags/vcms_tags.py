@@ -5,9 +5,10 @@ import re
 import time
 from django.conf import settings
 from django import template
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, get_language
 from django.utils.safestring import mark_safe
 from django.contrib.contenttypes.models import ContentType
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from vcms.content.models import *
 from vcms.share.models import *
@@ -15,7 +16,25 @@ from vcms.comments.models import Comment
 from vcms.utils import encrypt
 
 register = template.Library()
-import logging as log
+
+from logging import getLogger
+log = getLogger(__name__)
+
+
+@register.simple_tag(takes_context=True)
+def content_root_tree(context, show_hidden=False):
+    rs = Content.objects.filter(enabled=True, depth=1, language=get_language()).order_by('path')
+    if show_hidden is False:
+        rs = rs.filter(hidden=False)
+    return rs
+
+
+@register.simple_tag(takes_context=True)
+def content_annotate_list(context, show_hidden=False):
+    rs = Content.get_annotated_list()
+    if show_hidden is False:
+        rs = rs.filter(hidden=False)
+    return rs
 
 
 @register.filter(name='addclass')
@@ -99,15 +118,16 @@ def vcms_page(*args, **kwargs):
         return None
 
 
-@register.simple_tag
-def vcms_pages(*args, **kwargs):
+@register.simple_tag(takes_context=True)
+def vcms_pages(context, *args, **kwargs):
     category = kwargs.get('category')
     parent = kwargs.get('parent')
     language = kwargs.get('lang')
     limit = kwargs.get('limit', 10)
-    limit_from = kwargs.get('limit_from', 0)
-    rs = Content.objects.filter(enabled=True)
+    page = context['request'].GET.get('page', 1)
+    print(kwargs)
 
+    rs = Content.objects.filter(enabled=True)
     if parent:
         try:
             rs = rs.filter(url=parent).get().get_children()
@@ -121,8 +141,16 @@ def vcms_pages(*args, **kwargs):
         rs = rs.filter(language=language)
 
     rs = rs.filter(hidden=False).order_by('-date_published', '-id')
+    paginator = Paginator(rs, limit)
 
-    return rs[limit_from:limit]
+    try:
+        result = paginator.page(page)
+    except PageNotAnInteger:
+        result = paginator.page(1)
+    except EmptyPage:
+        result = paginator.page(paginator.num_pages)
+
+    return result
 
 
 @register.simple_tag()

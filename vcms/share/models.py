@@ -236,4 +236,5 @@ def share_on_change(sender, instance, **kwargs):
 
 @receiver(models.signals.pre_delete, sender=Share)
 def share_on_delete(sender, instance, **kwargs):
+    instance.tags.clear()
     instance.rm_files()
