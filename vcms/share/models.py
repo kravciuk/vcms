@@ -193,6 +193,7 @@ class Share(models.Model):
         if self.url:
             try:
                 match = detect_backend(self.url)
+                print(match)
                 if match:
                     return True
             except:

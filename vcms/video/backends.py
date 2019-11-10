@@ -12,3 +12,11 @@ class RedTube(VideoBackend):
     allow_https = True
     pattern_url = '{protocol}://embed.redtube.com/?id={code}&bgcolor=000000'
 
+
+class XTube(VideoBackend):
+    re_detect = re.compile(r'https://www\.xtube\.com/(.*)')
+    re_code = re.compile(r'https://www\.xtube\.com/(?P<code>(.*))')
+
+    allow_https = True
+    pattern_url = '{protocol}://www.xtube.com/{code}'
+
