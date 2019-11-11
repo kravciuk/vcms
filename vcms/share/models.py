@@ -2,7 +2,7 @@
 __author__ = 'Vadim'
 
 import os
-import re
+import json
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
@@ -73,6 +73,7 @@ class Share(models.Model):
     disabled = models.BooleanField(default=False, db_index=True)
     hidden = models.BooleanField(default=False, db_index=True)
     personal = models.BooleanField(_(u'Personal'), default=False)
+    json = models.TextField(_(u'Json content'), default='')
 
     views = models.IntegerField(default=0, editable=False)
     file_name = models.CharField(max_length=128, blank=True, null=True)
@@ -161,8 +162,8 @@ class Share(models.Model):
             my_id = self.id
         else:
             my_id = 0
-        rs = self._default_manager.filter(slug=unique_slug).exclude(id=my_id)
-        if rs:
+
+        if Share.objects.filter(slug=unique_slug).exclude(id=my_id).exists():
             counter += 1
             return self.unique_slug(slug, counter)
         else:
@@ -227,7 +228,9 @@ def share_on_change(sender, instance, **kwargs):
     if instance.pk:
         try:
             obj = Share.objects.get(pk=instance.pk)
-            if not instance.file or instance.file != obj.file:
+            if instance.file and instance.file != obj.file:
+                print(instance.file)
+                print(obj.file)
                 log.debug('Deleting old files')
                 obj.rm_files()
         except Exception as e:

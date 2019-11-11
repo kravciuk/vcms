@@ -125,7 +125,6 @@ def vcms_pages(context, *args, **kwargs):
     language = kwargs.get('lang')
     limit = kwargs.get('limit', 10)
     page = context['request'].GET.get('page', 1)
-    print(kwargs)
 
     rs = Content.objects.filter(enabled=True)
     if parent:
