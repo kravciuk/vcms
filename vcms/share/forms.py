@@ -35,7 +35,7 @@ class AddSnippetForm(forms.ModelForm):
 
     class Meta:
         model = Share
-        exclude = ['user', 'time_created', 'time_updated', 'views', 'disabled', 'slug', 'file_name']
+        exclude = ['user', 'time_created', 'time_updated', 'views', 'disabled', 'slug', 'file_name', 'json']
 
     class Media:
         css = {

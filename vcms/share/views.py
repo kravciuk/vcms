@@ -105,7 +105,6 @@ def add_or_edit(request, short_id=''):
     form = AddSnippetForm(instance=instance)
 
     if request.method == 'POST':
-        print(request.POST)
         if request.POST.get('delete') and instance is not None:
             instance.delete()
             return redirect('share_personal')
@@ -151,6 +150,8 @@ def add_or_edit(request, short_id=''):
             instance.save()
             form.save_m2m()
             return redirect('share_snippet', short_id=instance.short_id)
+        else:
+            log.debug(form.errors)
 
     return render(request, 'share/form.html', {
         'form': form,
