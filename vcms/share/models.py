@@ -13,6 +13,7 @@ from django.dispatch import receiver
 from taggit_autosuggest.managers import TaggableManager
 from markdown import markdown
 from hashids import Hashids
+from vu.abstract.models import UniqueFileField
 from embed_video.backends import detect_backend
 
 import logging
@@ -20,21 +21,6 @@ log = logging.getLogger(__name__)
 
 SHARE_UPLOADED_DIR = settings.VCMS_SHARE_UPLOADED_DIR
 SHARE_PROTECTED_DIR = settings.VCMS_SHARE_PROTECTED_DIR
-
-
-# def upload_path(instance, filename):
-#     filename, file_extension = os.path.splitext(filename)
-#     if file_extension:
-#         filename = "%s%s" % (slugify(filename), file_extension)
-#
-#     today = datetime.now()
-#     upload_path = os.path.join(settings.MEDIA_ROOT, SHARE_UPLOADED_DIR)
-#     path = os.path.join(upload_path, "%s/%s/%s" % (today.year, today.month, today.day))
-#
-#     if not os.path.exists(path):
-#         os.makedirs(path)
-#
-#     return "%s/%s" % (path, filename)
 
 
 class Share(models.Model):
@@ -60,28 +46,24 @@ class Share(models.Model):
     )
 
     user = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
+    tags = TaggableManager(_(u'Tags'), blank=True)
     type = models.CharField(max_length=10, verbose_name=_(u'Type'), choices=PYGMENTS_CHOISE, default='text', db_index=True)
     title = models.CharField(_(u'Title'),max_length=255, blank=True, null=True)
     slug = models.SlugField(_(u'Slug'),max_length=255, blank=True, null=True, db_index=True)
-    file = models.FileField(max_length=255, blank=True, null=True, upload_to=SHARE_UPLOADED_DIR)
-    original_file_name = models.CharField(_(u'Original file name'), blank=True, null=True, max_length=256)
     url = models.CharField(_(u'Url'),max_length=255, blank=True, null=True)
-    tags = TaggableManager(_(u'Tags'), blank=True)
     description = models.TextField(_(u'Description'), blank=True, null=True)
     content = models.TextField(_(u'Content'), blank=True, null=True)
     password = models.CharField(max_length=64, blank=True, db_index=True)
     disabled = models.BooleanField(default=False, db_index=True)
     hidden = models.BooleanField(default=False, db_index=True)
     personal = models.BooleanField(_(u'Personal'), default=False)
-    json = models.TextField(_(u'Json content'), default='')
+    json = models.JSONField(_(u'Json content'), default={})
 
-    views = models.IntegerField(default=0, editable=False)
-    file_name = models.CharField(max_length=128, blank=True, null=True)
-    thumbnail = models.CharField(max_length=255, null=True, editable=False)
+    expired_on = models.DateField(_(u'Expired on'), default='2099-01-01') # time bomb
+    view_count = models.IntegerField(default=0, editable=False)
     time_created = models.DateTimeField(auto_now_add=True, editable=False)
     time_updated = models.DateTimeField(auto_now=True, editable=False)
     time_delete = models.DateField(default=None, blank=True, null=True)
-    content_html = models.TextField(editable=False, blank=True, null=True)
 
     def rm_files(self):
         try:
@@ -208,7 +190,7 @@ class Share(models.Model):
 class File(models.Model):
     user = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
     share = models.ForeignKey(Share, blank=True, null=True, related_name='file_share', on_delete=models.CASCADE)
-    file = models.FileField(_(u'File'))
+    file = UniqueFileField(_(u'File'), upload_to='share/%Y/%m/%d')
     name = models.CharField(_(u'Name'), max_length=255)
     mime = models.CharField(max_length=128, blank=True, null=True)
     width = models.IntegerField(default=0)
@@ -216,7 +198,6 @@ class File(models.Model):
     thumbnail = models.CharField(blank=True, null=True, max_length=255)
     size = models.IntegerField(default=0)
     comment = models.TextField(_(u'Comments'), blank=True, null=True)
-    uuid = models.CharField(max_length=36, default='')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

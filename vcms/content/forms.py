@@ -46,7 +46,7 @@ class PageContentForm(forms.ModelForm):
 
     class Meta:
         model = Content
-        exclude = ['show_count', 'view_count', 'custom', 'user', 'rating', 'type', 'id', 'language']
+        exclude = ['show_count', 'view_count', 'custom', 'user', 'rating', 'type', 'id', 'language', 'json']
 
     class Media:
         css = {

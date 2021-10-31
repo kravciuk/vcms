@@ -8,15 +8,15 @@ window.jQuery || document.write('<script src="//ajax.googleapis.com/ajax/libs/jq
     <script>ddiconmenu.docinit({menuid:'myiconmenu', easing:"easeInOutCirc", dur:500 })</script>
 
 <ul id="myiconmenu" class="iconmenu">
-    {% if current_page_hash %}<li><a href="{% url 'content_edit' 'page' %}?page={{ current_page_hash }}">E</a></li>{% endif %}
+    {% if current_page_hash %}<li><a href="{% url 'content:edit' 'page' %}?page={{ current_page_hash }}">E</a></li>{% endif %}
     <li><a href="#" rel="csslibrary">+</a></li>
     <li><a href="{% url 'admin:index' %}" target="_blank">*</a></li>
 </ul>
 
 <div id="csslibrary" class="iconsubmenu dropdownmenu">
     <ul class="ulmenu">
-        <li><a href="{% url 'content_edit' 'page' %}?after={{ current_page_hash|default:'' }}"><i class="icon-file-text-alt"></i> Add page</a></li>
-        <li><a href="{% url 'share_add' %}"><i class="icon-code"></i> Add snippet</a></li>
+        <li><a href="{% url 'content:edit' 'page' %}?after={{ current_page_hash|default:'' }}"><i class="icon-file-text-alt"></i> Add page</a></li>
+{#        <li><a href="{% url 'share_add' %}"><i class="icon-code"></i> Add snippet</a></li>#}
     </ul>
 </div>
 

@@ -5,10 +5,10 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
-from vcms.content.models import Category, Content, Snippet
+from vcms.content.models import Category, Content, Share
 
 
-class SnippetAdmin(admin.ModelAdmin):
+class ShareAdmin(admin.ModelAdmin):
     list_display = ('title', 'slug')
     prepopulated_fields = {'slug': ('title',)}
 
@@ -53,4 +53,4 @@ class ContentAdmin(TreeAdmin):
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Content, ContentAdmin)
-admin.site.register(Snippet, SnippetAdmin)
+admin.site.register(Share, ShareAdmin)

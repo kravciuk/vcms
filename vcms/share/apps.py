@@ -5,7 +5,8 @@ from django.apps import AppConfig
 
 
 class DefaultConfig(AppConfig):
-    name = 'share'
+    name = 'vcms.share'
+    verbose_name = 'Share'
 
     def ready(self):
         from . import signals

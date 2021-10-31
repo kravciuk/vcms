@@ -91,7 +91,7 @@ def add_or_edit(request, content_type=None, parent=None):
                     rehost_content(instance.pk)
 
                 messages.add_message(request, messages.INFO, _(u'Record saved.'))
-                return redirect("%s?page=%s" % (reverse('content_edit', args=['page']), instance.hash))
+                return redirect("%s?page=%s" % (reverse('content:edit', args=['page']), instance.hash))
             else:
                 log.debug('Form error: %s' % form.errors)
         else:

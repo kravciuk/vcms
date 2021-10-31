@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Vadim Kravciuk, vadim@kravciuk.com'
 
-ult_app_config = 'share.apps.DefaultConfig'
+# from django.apps import apps as django_apps
+
+default_app_config = 'vcms.share.apps.DefaultConfig'
 
