@@ -107,7 +107,7 @@ def add_or_edit(request, short_id=''):
     if request.method == 'POST':
         if request.POST.get('delete') and instance is not None:
             instance.delete()
-            return redirect('share_personal')
+            return redirect('share:personal')
 
         form = AddSnippetForm(request.POST, request.FILES, instance=instance)
         if form.is_valid():
@@ -116,12 +116,12 @@ def add_or_edit(request, short_id=''):
             instance.user = request.user
 
             # format content
-            if instance.content != '':
-                lexer = get_lexer_by_name(instance.type, stripall=True)
-                formatter = HtmlFormatter(linenos=True, cssclass="codehilite")
-                instance.content_html = highlight(instance.content, lexer, formatter)
-            else:
-                instance.content_html = None
+            # if instance.content != '' and instance.type:
+            #     lexer = get_lexer_by_name(instance.type.code, stripall=True)
+            #     formatter = HtmlFormatter(linenos=True, cssclass="codehilite")
+            #     instance.content_html = highlight(instance.content, lexer, formatter)
+            # else:
+            #     instance.content_html = None
 
             if request.FILES.get('file'):
                 if instance.pk:
@@ -149,7 +149,7 @@ def add_or_edit(request, short_id=''):
 
             instance.save()
             form.save_m2m()
-            return redirect('share_snippet', short_id=instance.short_id)
+            return redirect('share:snippet', short_id=instance.short_id)
         else:
             log.debug(form.errors)
 

@@ -7,29 +7,6 @@ from vcms.share.models import Share
 
 
 class AddSnippetForm(forms.ModelForm):
-    PYGMENTS_CHOISE = (
-        ('text', 'Plain text'),
-        ('python', 'Python'),
-        ('php', 'PHP'),
-        ('bash', 'Bash'),
-        ('html', 'HTML'),
-        ('django', 'Django'),
-        ('smarty', 'Smarty'),
-
-        ('mysql', 'Mysql'),
-        ('postgresql', 'Postgresql'),
-
-        ('csharp', 'C#'),
-        ('lua', 'Lua'),
-        ('perl', 'Perl'),
-        ('ruby', 'Ruby'),
-        ('tcl', 'Tcl'),
-        ('scheme', 'Scheme'),
-        ('xml', 'XML'),
-    )
-
-    type = forms.ChoiceField(choices=PYGMENTS_CHOISE)
-
     def __init__(self, *args, **kwargs):
         super(AddSnippetForm, self).__init__(*args, **kwargs)
 
