@@ -61,7 +61,7 @@
 
 		</div>
 		<div class="col-md-2">
-				<a href="{% url 'share:add' %}" class="btn btn-success">{% trans "Add new snippet" %}</a>
+				{% if perms.share.add_share %}<a href="{% url 'share:add' %}" class="btn btn-success">{% trans "Add new snippet" %}</a>{% endif %}
 		</div>
 	</div>
 

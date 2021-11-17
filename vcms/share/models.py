@@ -119,6 +119,13 @@ class Share(models.Model):
         else:
             return self.base_url
 
+    @property
+    def allow_change(self):
+        if self.user:
+            return True
+        else:
+            return False
+
     def unique_slug(self, slug, counter=0):
         if counter > 0:
             unique_slug = "%s%s" % (slug, counter)
