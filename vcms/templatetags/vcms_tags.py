@@ -169,7 +169,7 @@ def share_download_url(context, obj):
     remote_addr = context['request'].META['REMOTE_ADDR']
     timestamp = int(time.time())
     encrypted_key = encrypt(settings.SECRET_KEY, "%s %s" % (timestamp, remote_addr))
-    return reverse('share_download_file', args=[obj.short_id, encrypted_key])
+    return reverse('share:download', args=[obj.short_id, encrypted_key])
 
 
 @register.simple_tag

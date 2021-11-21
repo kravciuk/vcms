@@ -26,11 +26,16 @@
     <div class="row">
         <div class="col-md-12">
             {% if snippet.description %}
-                <h4>Description</h4>
                 {{ snippet.description }}
             {% endif %}
         </div>
     </div>
+
+    {% for file in snippet.file_share.all %}
+        <div class="row">
+            <div class="col-md-12"><a href="{% share_download_url snippet %}">{{ file.name }}</a></div>
+        </div>
+    {% endfor %}
 
   	{% if snippet.thumbnail %}
 		<div class="row">
@@ -64,9 +69,9 @@
     {% endif %}
 
 	{% if snippet.json.html %}
-		<div class="row">
+		<div class="row mt-3">
             <div class="col-md-12">
-                <h4>Snippet code</h4>
+                <h6>Snippet code</h6>
                 {{ snippet.json.html|safe }}
 		    </div>
 		</div>

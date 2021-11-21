@@ -3,6 +3,7 @@ __author__ = 'Vadim'
 
 import os
 import json
+import uuid
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
@@ -154,14 +155,14 @@ class Share(models.Model):
     def get_absolute_url(self):
         return '/%s/%s' % ('share', self.short_id)
 
-    def file_type(self):
-        if self.file_name is not None:
-            filename, file_extension = os.path.splitext(self.file_name)
-            if file_extension.lower() in ['.jpg', '.jpeg', '.gif', '.png']:
-                return 'image'
-            else:
-                return 'file'
-        return self.type
+    # def file_type(self):
+    #     if self.file_name is not None:
+    #         filename, file_extension = os.path.splitext(self.file_name)
+    #         if file_extension.lower() in ['.jpg', '.jpeg', '.gif', '.png']:
+    #             return 'image'
+    #         else:
+    #             return 'file'
+    #     return self.type
 
     @property
     def video_link(self):
@@ -190,10 +191,17 @@ class File(models.Model):
     thumbnail = models.CharField(blank=True, null=True, max_length=255)
     size = models.IntegerField(default=0)
     comment = models.TextField(_(u'Comments'), blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
 
     def __str__(self):
         return self.name
+
+    def download(self):
+
+        return
+
 
 
 # @receiver(models.signals.pre_save, sender=Share)

@@ -16,7 +16,7 @@ from pilkit.processors import ResizeToFit
 from vu.sendfile import sendfile
 
 from .forms import AddSnippetForm
-from .models import Share, SHARE_PROTECTED_DIR, SHARE_UPLOADED_DIR
+from .models import Share, SHARE_PROTECTED_DIR, SHARE_UPLOADED_DIR, File
 from vcms.utils import hash_to_id, unique_file_name, encrypt, decrypt
 
 from vu.paginator import FlynsarmyPaginator
@@ -102,14 +102,21 @@ def add_or_edit(request, short_id=''):
         instance = res[0]
     else:
         instance = None
-    form = AddSnippetForm(instance=instance)
+
+    if request.method == 'GET':
+        form = AddSnippetForm(instance=instance)
+    else:
+        form = AddSnippetForm(request.POST, request.FILES, instance=instance)
+
+    if instance:
+        log.debug("Find file for delete select")
+        form.fields['delete_file'].choices = [(x.uuid, x.name) for x in instance.file_share.all()]
 
     if request.method == 'POST':
         if request.POST.get('delete') and instance is not None:
             instance.delete()
             return redirect('share:personal')
 
-        form = AddSnippetForm(request.POST, request.FILES, instance=instance)
         if form.is_valid():
 
             instance = form.save(commit=False)
@@ -123,35 +130,48 @@ def add_or_edit(request, short_id=''):
             # else:
             #     instance.content_html = None
 
-            if request.FILES.get('file'):
-                if instance.pk:
-                    instance.thumbnail = None
-                    instance.rm_files()
-
-                result = _upload_file(request.FILES['file'], password=instance.password)
-                file_full_path = os.path.join(result.raw_path, result.name)
-                instance.file_name = request.FILES['file'].name[:128]
-                instance.file = os.path.join(result.path, result.name)
-
-                if instance.file_name.lower().endswith(('.jpg', '.jpeg', '.png')):
-                    source = open(file_full_path, 'rb')
-                    try:
-                        th = Thumbnail(source=source)
-                        th_content = th.generate()
-                        fp = open(os.path.join(result.raw_path, 'th_'+result.name), 'wb')
-                        fp.write(th_content.read())
-                        fp.close()
-                        source.close()
-                        th_content.close()
-                        instance.thumbnail = os.path.join(result.path, 'th_'+result.name)
-                    except Exception as e:
-                        log.error("Error creating thumbnail file: %s" % e)
+                # if instance.pk:
+                #     instance.thumbnail = None
+                #     instance.rm_files()
+                #
+                # result = _upload_file(request.FILES['file'], password=instance.password)
+                # file_full_path = os.path.join(result.raw_path, result.name)
+                # instance.file_name = request.FILES['file'].name[:128]
+                # instance.file = os.path.join(result.path, result.name)
+                #
+                # if instance.file_name.lower().endswith(('.jpg', '.jpeg', '.png')):
+                #     source = open(file_full_path, 'rb')
+                #     try:
+                #         th = Thumbnail(source=source)
+                #         th_content = th.generate()
+                #         fp = open(os.path.join(result.raw_path, 'th_'+result.name), 'wb')
+                #         fp.write(th_content.read())
+                #         fp.close()
+                #         source.close()
+                #         th_content.close()
+                #         instance.thumbnail = os.path.join(result.path, 'th_'+result.name)
+                #     except Exception as e:
+                #         log.error("Error creating thumbnail file: %s" % e)
 
             instance.save()
             form.save_m2m()
+
+            for file in form.cleaned_data.get('delete_file'):
+                File.objects.filter(uuid=file, share=instance).delete()
+
+            if request.FILES.get('file'):
+                for file_obj in request.FILES.getlist('file'):
+                    File.objects.create(
+                        user=request.user,
+                        share=instance,
+                        file=file_obj,
+                        mime=file_obj.content_type.split('/')[0],
+                        name=file_obj.name,
+                    )
+
             return redirect('share:snippet', short_id=instance.short_id)
         else:
-            log.debug(form.errors)
+            log.debug("FORM Errors: %s" % form.errors)
 
     return render(request, 'share/form.html', {
         'form': form,

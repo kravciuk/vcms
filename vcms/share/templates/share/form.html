@@ -126,7 +126,7 @@ ul.as-selections li.as-original input {  height: auto !important;  }
     <div class="row">
         <div class="col-md-1"></div>
         <div class="col-md-11">
-        <h2>{% trans 'Create new record' %}</h2>
+        <h2>{% if instance %}{% trans 'Edit record' %}{% else %}{% trans 'Create new record' %}{% endif %}</h2>
             {{ form.non_field_errors }}
 
             <div class="form-group">
@@ -159,8 +159,23 @@ ul.as-selections li.as-original input {  height: auto !important;  }
                     <div class="custom-file">
                         {{ form.file.errors }}
                         <label class="custom-file-label" for="{{ form.file.id_for_label }}">File:</label>
-                        {% render_field form.file class='custom-file-input' %}
+{#                        {% render_field form.file class='custom-file-input' %}#}
+                        <input type="file" name="file" class="custom-file-input" id="id_file" multiple>
                     </div>
+
+                    {% if instance %}
+                        {{ form.delete_file }}
+{#                        <br /><br />#}
+{#                        {% for file in instance.file_share.all %}#}
+{#                            <div class="row">#}
+{#                                <div class="col-md-11"><input type="checkbox" name="delete_file" value="{{ file.uuid }}"> {{ file.name }} </div>#}
+{#                            </div>#}
+{#                        {% endfor %}#}
+                            <div class="row">
+                                <div class="col-md-11">{% trans 'Check file for delete' %}</div>
+                            </div>
+                    {% endif %}
+
                 </section>
                 <section id="content-tab3">
                     <div class="form-group">

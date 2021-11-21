@@ -7,12 +7,15 @@ from vcms.share.models import Share
 
 
 class AddSnippetForm(forms.ModelForm):
+    file = forms.FileField(required=False)
+    delete_file = forms.MultipleChoiceField(required=False, widget = forms.CheckboxSelectMultiple())
+
     def __init__(self, *args, **kwargs):
         super(AddSnippetForm, self).__init__(*args, **kwargs)
 
     class Meta:
         model = Share
-        exclude = ['user', 'time_created', 'time_updated', 'views', 'disabled', 'slug', 'file_name', 'json']
+        exclude = ['user', 'time_created', 'time_updated', 'views', 'disabled', 'slug', 'file', 'json']
 
     class Media:
         css = {
