@@ -198,9 +198,20 @@ class File(models.Model):
     def __str__(self):
         return self.name
 
-    def download(self):
+    @property
+    def is_private(self):
+        if hasattr(self, '__private'):
+            return self.__private
+        else:
+            log.debug('Get DB request for private check.')
+            self.__private = self.share.personal
+        return self.__private
 
-        return
+    def download(self):
+        if self.is_private is False:
+            return self.file.url
+        else:
+            return '/no-download/'
 
 
 
