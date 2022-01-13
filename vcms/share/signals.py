@@ -27,6 +27,8 @@ def process_snippet(sender, instance=None, created=False, **kwargs):
         lexer = get_lexer_by_name(instance.type.code, stripall=True)
         formatter = HtmlFormatter(linenos=True, cssclass="codehilite")
         instance.json['html'] = highlight(instance.content, lexer, formatter)
+    elif instance.content:
+        instance.json['html'] = '<br />\n'.join(instance.content.split('\n'))
     else:
         instance.json['html'] = None
 

@@ -2,8 +2,12 @@
 __author__ = 'Vadim'
 
 from django import forms
+
+from pygments.lexers import get_all_lexers
+
 from django.contrib.admin.widgets import AdminDateWidget
-from vcms.share.models import Share
+from vcms.share.models import Share, Pygment
+
 
 
 class AddSnippetForm(forms.ModelForm):
@@ -40,3 +44,16 @@ class AddSnippetForm(forms.ModelForm):
 
 class FileUploadForm(forms.Form):
     file = forms.FileField()
+
+
+class AdminPygmentForm(forms.ModelForm):
+    code = forms.ChoiceField()
+    model = Pygment
+
+    def __init__(self, *args, **kwargs):
+        choice = []
+        for lexer in get_all_lexers():
+            if lexer[1]:
+                choice.append((lexer[1][0], lexer[0]))
+        super().__init__(*args, **kwargs)
+        self.fields['code'].choices = choice
