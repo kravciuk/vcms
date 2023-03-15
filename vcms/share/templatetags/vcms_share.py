@@ -5,7 +5,7 @@ import re
 import time
 from django.conf import settings
 from django import template
-from django.utils.translation import ugettext_lazy as _, get_language
+from django.utils.translation import gettext_lazy as _, get_language
 from django.utils.safestring import mark_safe
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger

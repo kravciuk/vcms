@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static i18n sekizai_tags embed_video_tags vcms_tags %}
+{% load static i18n sekizai_tags vcms_tags %}
 
 {% block title %}{{ snippet.title }}{% endblock %}
 
@@ -63,11 +63,11 @@
         </div>
 	{% endif %}
 
-    {% if snippet.video_link %}
-		<div class="row">
-			<div class="col-md-12">{% video snippet.url 'large' %}</div>
-        </div>
-    {% endif %}
+{#    {% if snippet.video_link %}#}
+{#		<div class="row">#}
+{#			<div class="col-md-12">{% video snippet.url 'large' %}</div>#}
+{#        </div>#}
+{#    {% endif %}#}
 
 	{% if snippet.json.html %}
 		<div class="row mt-3">

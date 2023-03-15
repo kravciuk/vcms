@@ -4,7 +4,7 @@ __author__ = 'Vadim Kravciuk, vadim@kravciuk.com'
 from datetime import datetime
 import re
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.db import models
@@ -25,6 +25,10 @@ if hasattr(settings, 'VCMS_POST_CUTTER'):
     cutter = settings.VCMS_POST_CUTTER
 else:
     cutter = '<!-- cut -->'
+
+
+def default_json():
+    return {}
 
 
 class PostTag(Tag):
@@ -92,10 +96,11 @@ class Content(MP_Node):
     image = models.ImageField(upload_to='content/%Y/%m/%d', blank=True)
     date_published = models.DateField(_(u'Date published'), default=timezone.now, db_index=True)
     content = RichTextUploadingField(_(u'Content'), blank=True)
+    # content = RichTextField(_(u'Content'), blank=True)
     comments = models.BooleanField(_(u'Allow comments'), default=False)
     language = models.CharField(_(u'Language'), choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE, max_length=5)
 
-    json = models.JSONField(_(u'Json content'), default={}, editable=False)
+    json = models.JSONField(_(u'Json content'), default=default_json, editable=False)
     rating = models.IntegerField(_(u'Rating'), default=0)
     show_count = models.IntegerField(_(u'Show count'), default=0)
     view_count = models.IntegerField(_(u'View count'), default=0)

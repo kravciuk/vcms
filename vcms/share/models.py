@@ -8,14 +8,14 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
 from django.dispatch import receiver
 from taggit_autosuggest.managers import TaggableManager
 from markdown import markdown
 from hashids import Hashids
 from vu.abstract.models import UniqueFileField
-from embed_video.backends import detect_backend
+# from embed_video.backends import detect_backend
 
 import logging
 log = logging.getLogger(__name__)
@@ -23,6 +23,9 @@ log = logging.getLogger(__name__)
 SHARE_UPLOADED_DIR = settings.VCMS_SHARE_UPLOADED_DIR
 SHARE_PROTECTED_DIR = settings.VCMS_SHARE_PROTECTED_DIR
 
+
+def default_json():
+    return {}
 
 class Pygment(models.Model):
     name = models.CharField(_(u'Name'), max_length=32)
@@ -38,6 +41,7 @@ class Pygment(models.Model):
 
 
 class Share(models.Model):
+
     user = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
     tags = TaggableManager(_(u'Tags'), blank=True)
     type = models.ForeignKey(Pygment, verbose_name=_(u'Pygment type'), blank=True, null=True, on_delete=models.SET_NULL)
@@ -50,7 +54,7 @@ class Share(models.Model):
     disabled = models.BooleanField(default=False, db_index=True)
     hidden = models.BooleanField(default=False, db_index=True)
     personal = models.BooleanField(_(u'Personal'), default=False)
-    json = models.JSONField(_(u'Json content'), default={})
+    json = models.JSONField(_(u'Json content'), default=default_json)
 
     expired_on = models.DateField(_(u'Expired on'), blank=True, null=True)
     view_count = models.IntegerField(default=0, editable=False)
@@ -164,35 +168,36 @@ class Share(models.Model):
     #             return 'file'
     #     return self.type
 
-    @property
-    def video_link(self):
-        if self.url:
-            try:
-                match = detect_backend(self.url)
-                print(match)
-                if match:
-                    return True
-            except:
-                pass
-        return False
+    # @property
+    # def video_link(self):
+    #     if self.url:
+    #         try:
+    #             match = detect_backend(self.url)
+    #             print(match)
+    #             if match:
+    #                 return True
+    #         except:
+    #             pass
+    #     return False
 
     def __str__(self):
         return self.title
 
 
 class File(models.Model):
+    TYPE_IMAGE = 'image'
+
     user = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
     share = models.ForeignKey(Share, blank=True, null=True, related_name='file_share', on_delete=models.CASCADE)
     file = UniqueFileField(_(u'File'), upload_to='share/%Y/%m/%d')
     name = models.CharField(_(u'Name'), max_length=255)
     mime = models.CharField(max_length=128, blank=True, null=True)
-    width = models.IntegerField(default=0)
-    height = models.IntegerField(default=0)
-    thumbnail = models.CharField(blank=True, null=True, max_length=255)
-    size = models.IntegerField(default=0)
+    json = models.JSONField(_(u'Json content'), default=default_json)
+    processed = models.BooleanField(_(u'Processed'), default=False)
     comment = models.TextField(_(u'Comments'), blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, editable=False)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
 
     def __str__(self):
@@ -203,7 +208,7 @@ class File(models.Model):
         if hasattr(self, '__private'):
             return self.__private
         else:
-            log.debug('Get DB request for private check.')
+            log.debug(f'Check file {self} for public access')
             self.__private = self.share.personal
         return self.__private
 
